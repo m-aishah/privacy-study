@@ -42,6 +42,10 @@ export const content = {
     leaveWarningBody:
       "This study does not support going back. If you need to stop or restart, please speak with the session coordinator.",
     leaveWarningDismiss: "Okay, continue",
+    reloadWarningTitle: "Refreshing will restart this session",
+    reloadWarningBody:
+      "Your answers so far are already saved, but refreshing will send you back to the very beginning. If you need to restart, please speak with the session coordinator first.",
+    reloadWarningDismiss: "Okay, stay here",
   },
   children: {
     welcomeHeading: "Hi there!",
@@ -75,6 +79,9 @@ export const content = {
     leaveWarningTitle: "Whoops, hold on!",
     leaveWarningBody: "We can't go back during this game. Ask the grown-up in the room if you need help!",
     leaveWarningDismiss: "Okay!",
+    reloadWarningTitle: "Wait, don't refresh!",
+    reloadWarningBody: "Refreshing will start the game over from the beginning! Ask the grown-up in the room if you need help.",
+    reloadWarningDismiss: "Okay!",
   },
 } as const;
 
