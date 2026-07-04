@@ -8,12 +8,16 @@ export function Modal({
   body,
   dismissLabel,
   onDismiss,
+  confirmLabel,
+  onConfirm,
 }: {
   mode: Mode;
   title: string;
   body: string;
   dismissLabel: string;
   onDismiss: () => void;
+  confirmLabel?: string;
+  onConfirm?: () => void;
 }) {
   const isAdult = mode === "adult";
 
@@ -42,17 +46,33 @@ export function Modal({
         <p className={isAdult ? "text-lg text-adult-text mb-6" : "text-xl text-[#1A1A1A] mb-6"}>
           {body}
         </p>
-        <button
-          onClick={onDismiss}
-          autoFocus
-          className={
-            isAdult
-              ? "font-adult text-lg px-8 py-3 bg-adult-green text-white rounded-none hover:opacity-90 transition-opacity"
-              : "font-kids text-lg px-8 py-3 bg-kids-coral text-white rounded-full shadow-md hover:scale-105 transition-transform"
-          }
-        >
-          {dismissLabel}
-        </button>
+
+        <div className="flex flex-col gap-3 items-center">
+          <button
+            onClick={onDismiss}
+            autoFocus
+            className={
+              isAdult
+                ? "font-adult text-lg px-8 py-3 bg-adult-green text-white rounded-none hover:opacity-90 transition-opacity w-full"
+                : "font-kids text-lg px-8 py-3 bg-kids-coral text-white rounded-full shadow-md hover:scale-105 transition-transform w-full"
+            }
+          >
+            {dismissLabel}
+          </button>
+
+          {confirmLabel && onConfirm && (
+            <button
+              onClick={onConfirm}
+              className={
+                isAdult
+                  ? "font-adult text-base px-8 py-2 text-adult-text underline hover:text-adult-green transition-colors"
+                  : "font-kids text-base px-8 py-2 text-[#1A1A1A]/70 underline hover:text-kids-coral transition-colors"
+              }
+            >
+              {confirmLabel}
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -90,42 +90,6 @@ export function ChildIcon({ className }: { className?: string }) {
   );
 }
 
-export function ThumbsUpIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-      aria-hidden
-    >
-      <path d="M7 10v11" />
-      <path d="M11 21h6.5a2 2 0 0 0 2-1.6l1.3-6.5a2 2 0 0 0-2-2.4H14V5a2 2 0 0 0-4 0v2a5 5 0 0 1-3 4.5v9" />
-    </svg>
-  );
-}
-
-export function ThumbsDownIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-      aria-hidden
-    >
-      <path d="M17 14V3" />
-      <path d="M13 3H6.5a2 2 0 0 0-2 1.6l-1.3 6.5a2 2 0 0 0 2 2.4H10v5a2 2 0 0 0 4 0v-2a5 5 0 0 1 3-4.5V3" />
-    </svg>
-  );
-}
-
 export function QuestionMarkIcon({ className }: { className?: string }) {
   return (
     <svg
@@ -180,23 +144,6 @@ export function XCircleIcon({ className }: { className?: string }) {
       <circle cx="12" cy="12" r="10" />
       <line x1="15" y1="9" x2="9" y2="15" />
       <line x1="9" y1="9" x2="15" y2="15" />
-    </svg>
-  );
-}
-
-export function StarIcon({ className, filled = false }: { className?: string; filled?: boolean }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill={filled ? "currentColor" : "none"}
-      stroke="currentColor"
-      strokeWidth={filled ? 0 : 1.5}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-      aria-hidden
-    >
-      <polygon points="12 2.5 15.09 8.76 22 9.77 17 14.64 18.18 21.52 12 18.27 5.82 21.52 7 14.64 2 9.77 8.91 8.76 12 2.5" />
     </svg>
   );
 }

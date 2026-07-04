@@ -1,5 +1,4 @@
 import { Mode } from "@/lib/supabase";
-import { StarIcon } from "./icons";
 
 export function ProgressIndicator({
   mode,
@@ -32,13 +31,15 @@ export function ProgressIndicator({
   return (
     <div className={`w-full max-w-2xl mx-auto px-4 ${compact ? "pt-3" : "pt-6"} flex flex-wrap justify-center gap-2`}>
       {Array.from({ length: total }, (_, i) => i + 1).map((n) => (
-        <StarIcon
+        <span
           key={n}
-          filled={n <= current}
-          className={`w-6 h-6 text-kids-yellow transition-transform ${
-            n <= current ? "scale-110" : "opacity-30"
+          className={`text-2xl transition-transform ${
+            n <= current ? "opacity-100 scale-110" : "opacity-30"
           }`}
-        />
+          aria-hidden
+        >
+          {n <= current ? "⭐" : "☆"}
+        </span>
       ))}
     </div>
   );

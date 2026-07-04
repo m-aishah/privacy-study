@@ -7,7 +7,6 @@ import { ProgressIndicator } from "@/components/ProgressIndicator";
 import { AnswerOptions } from "@/components/AnswerOptions";
 import { ConfidenceRating } from "@/components/ConfidenceRating";
 import { NextButton } from "@/components/NextButton";
-import { ThumbsUpIcon, ThumbsDownIcon, QuestionMarkIcon } from "@/components/icons";
 import { useAudio } from "@/hooks/useAudio";
 import { audioClip, content, slideshowPairSrc, TOTAL_PAIRS } from "@/lib/content";
 import { logSlideshowResponse, Mode, SlideshowAnswer } from "@/lib/supabase";
@@ -107,9 +106,9 @@ export default function SlideshowPage({ params }: { params: { mode: Mode } }) {
         onSelect={setAnswer}
         compact
         options={[
-          { value: "same", label: copy.answerSame, icon: <ThumbsUpIcon className="w-6 h-6" /> },
-          { value: "not_same", label: copy.answerNotSame, icon: <ThumbsDownIcon className="w-6 h-6" /> },
-          { value: "not_sure", label: copy.answerNotSure, icon: <QuestionMarkIcon className="w-6 h-6" /> },
+          { value: "same", label: copy.answerSame },
+          { value: "not_same", label: copy.answerNotSame },
+          { value: "not_sure", label: copy.answerNotSure },
         ]}
       />
 

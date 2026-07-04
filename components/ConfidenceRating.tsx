@@ -1,5 +1,4 @@
 import { Mode } from "@/lib/supabase";
-import { StarIcon } from "./icons";
 
 export function ConfidenceRating({
   mode,
@@ -47,11 +46,11 @@ export function ConfidenceRating({
             key={n}
             onClick={() => onChange(n)}
             aria-label={`${n} stars`}
-            className={`text-kids-yellow transition-transform hover:scale-110 ${
+            className={`${compact ? "text-3xl" : "text-4xl"} transition-transform hover:scale-110 ${
               value !== null && n <= value ? "opacity-100" : "opacity-30"
             }`}
           >
-            <StarIcon filled={value !== null && n <= value} className={compact ? "w-8 h-8" : "w-10 h-10"} />
+            ⭐
           </button>
         ))}
       </div>
