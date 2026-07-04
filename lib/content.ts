@@ -13,6 +13,8 @@ export const content = {
       "Thank you for taking part in this study. Please enter the participant ID you were given below to begin.",
     participantIdLabel: "Enter your Participant ID",
     participantIdPlaceholder: "e.g. A1",
+    duplicateIdError:
+      "This participant ID has already been used. Please check with your session coordinator for the correct ID.",
     submit: "Continue",
     slideshowIntroHeading: "Comparing Faces",
     slideshowQuestion: "Are these the same person?",
@@ -46,12 +48,16 @@ export const content = {
     reloadWarningBody:
       "Your answers so far are already saved, but refreshing will send you back to the very beginning. If you need to restart, please speak with the session coordinator first.",
     reloadWarningDismiss: "Okay, stay here",
+    errorTitle: "Something went wrong",
+    errorBody: "Please let your session coordinator know. They can help get things back on track.",
+    errorRetry: "Try Again",
   },
   children: {
     welcomeHeading: "Hi there!",
     welcomeBody: "We're so happy you're here! Type in your special ID to start the fun.",
     participantIdLabel: "Type your ID",
     participantIdPlaceholder: "e.g. C1",
+    duplicateIdError: "That ID has already been used! Ask the grown-up in the room for the right one.",
     submit: "Let's Go!",
     slideshowIntroHeading: "Spot the Match!",
     slideshowQuestion: "Are these two pictures the same person?",
@@ -82,6 +88,9 @@ export const content = {
     reloadWarningTitle: "Wait, don't refresh!",
     reloadWarningBody: "Refreshing will start the game over from the beginning! Ask the grown-up in the room if you need help.",
     reloadWarningDismiss: "Okay!",
+    errorTitle: "Oops!",
+    errorBody: "Something went a little wonky. Let's ask the grown-up in the room for help!",
+    errorRetry: "Try Again!",
   },
 } as const;
 

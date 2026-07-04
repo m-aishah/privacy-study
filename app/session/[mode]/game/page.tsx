@@ -14,7 +14,7 @@ import {
   STAND_UP_AFTER_ACTION,
   TOTAL_ACTIONS,
 } from "@/lib/content";
-import { Mode, triggerPipelineStart } from "@/lib/supabase";
+import { Mode, triggerPipelineStart, triggerPipelineStop } from "@/lib/supabase";
 
 type Phase = "action" | "standup";
 
@@ -49,6 +49,7 @@ export default function GamePage({ params }: { params: { mode: Mode } }) {
 
   const handleNext = () => {
     if (actionNumber >= TOTAL_ACTIONS) {
+      triggerPipelineStop();
       playComplete();
       return;
     }

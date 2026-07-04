@@ -7,6 +7,9 @@ import {
   SlideshowResponseRow,
   supabase,
 } from "@/lib/supabase";
+import { TOTAL_PAIRS } from "@/lib/content";
+
+type CompletionInfo = { slideshowCount: number; hasSeeYourself: boolean };
 
 export default function AdminPage() {
   const [authed, setAuthed] = useState(false);
@@ -68,6 +71,7 @@ export default function AdminPage() {
 
 function AdminDashboard() {
   const [sessions, setSessions] = useState<SessionRow[]>([]);
+  const [completion, setCompletion] = useState<Map<string, CompletionInfo>>(new Map());
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [slideshowByExpanded, setSlideshowByExpanded] = useState<SlideshowResponseRow[]>([]);
@@ -76,11 +80,26 @@ function AdminDashboard() {
 
   useEffect(() => {
     (async () => {
-      const { data, error } = await supabase
-        .from("sessions")
-        .select("*")
-        .order("created_at", { ascending: false });
-      if (!error && data) setSessions(data as SessionRow[]);
+      const [sessionsRes, slideshowRes, seeYourselfRes] = await Promise.all([
+        supabase.from("sessions").select("*").order("created_at", { ascending: false }),
+        supabase.from("slideshow_responses").select("session_id"),
+        supabase.from("see_yourself_responses").select("session_id"),
+      ]);
+
+      if (!sessionsRes.error && sessionsRes.data) setSessions(sessionsRes.data as SessionRow[]);
+
+      const map = new Map<string, CompletionInfo>();
+      (slideshowRes.data as { session_id: string }[] | null)?.forEach((r) => {
+        const entry = map.get(r.session_id) ?? { slideshowCount: 0, hasSeeYourself: false };
+        entry.slideshowCount += 1;
+        map.set(r.session_id, entry);
+      });
+      (seeYourselfRes.data as { session_id: string }[] | null)?.forEach((r) => {
+        const entry = map.get(r.session_id) ?? { slideshowCount: 0, hasSeeYourself: false };
+        entry.hasSeeYourself = true;
+        map.set(r.session_id, entry);
+      });
+      setCompletion(map);
       setLoading(false);
     })();
   }, []);
@@ -201,6 +220,7 @@ function AdminDashboard() {
                   <th className="px-4 py-2">Participant ID</th>
                   <th className="px-4 py-2">Mode</th>
                   <th className="px-4 py-2">Date</th>
+                  <th className="px-4 py-2">Completion</th>
                   <th className="px-4 py-2"></th>
                 </tr>
               </thead>
@@ -209,6 +229,7 @@ function AdminDashboard() {
                   <SessionRowView
                     key={s.id}
                     session={s}
+                    completion={completion.get(s.id) ?? { slideshowCount: 0, hasSeeYourself: false }}
                     expanded={expanded === s.id}
                     onToggle={() => toggleExpand(s.id)}
                     slideshow={expanded === s.id ? slideshowByExpanded : []}
@@ -217,7 +238,7 @@ function AdminDashboard() {
                 ))}
                 {sessions.length === 0 && (
                   <tr>
-                    <td colSpan={4} className="px-4 py-6 text-center text-gray-500">
+                    <td colSpan={5} className="px-4 py-6 text-center text-gray-500">
                       No sessions yet.
                     </td>
                   </tr>
@@ -231,14 +252,35 @@ function AdminDashboard() {
   );
 }
 
+function CompletionBadge({ completion }: { completion: CompletionInfo }) {
+  const isComplete = completion.slideshowCount >= TOTAL_PAIRS && completion.hasSeeYourself;
+
+  if (isComplete) {
+    return (
+      <span className="inline-flex items-center gap-1 text-green-700 bg-green-50 border border-green-200 rounded px-2 py-0.5 text-xs font-medium">
+        Complete
+      </span>
+    );
+  }
+
+  return (
+    <span className="inline-flex items-center gap-1 text-amber-700 bg-amber-50 border border-amber-200 rounded px-2 py-0.5 text-xs font-medium">
+      Incomplete · {completion.slideshowCount}/{TOTAL_PAIRS} slideshow
+      {completion.hasSeeYourself ? "" : ", no see-yourself"}
+    </span>
+  );
+}
+
 function SessionRowView({
   session,
+  completion,
   expanded,
   onToggle,
   slideshow,
   seeYourself,
 }: {
   session: SessionRow;
+  completion: CompletionInfo;
   expanded: boolean;
   onToggle: () => void;
   slideshow: SlideshowResponseRow[];
@@ -251,6 +293,9 @@ function SessionRowView({
         <td className="px-4 py-2 capitalize">{session.mode}</td>
         <td className="px-4 py-2">{new Date(session.created_at).toLocaleString()}</td>
         <td className="px-4 py-2">
+          <CompletionBadge completion={completion} />
+        </td>
+        <td className="px-4 py-2">
           <button onClick={onToggle} className="text-blue-700 underline">
             {expanded ? "Hide" : "View"}
           </button>
@@ -258,7 +303,7 @@ function SessionRowView({
       </tr>
       {expanded && (
         <tr className="bg-gray-50 border-t border-gray-200">
-          <td colSpan={4} className="px-4 py-4">
+          <td colSpan={5} className="px-4 py-4">
             <h3 className="font-semibold text-gray-700 mb-2">Slideshow Responses</h3>
             <table className="w-full text-xs mb-4">
               <thead>

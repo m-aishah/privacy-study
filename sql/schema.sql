@@ -30,6 +30,12 @@ create table if not exists see_yourself_responses (
 create index if not exists slideshow_responses_session_id_idx on slideshow_responses (session_id);
 create index if not exists see_yourself_responses_session_id_idx on see_yourself_responses (session_id);
 
+-- Participant IDs (e.g. "A1", "C1") must be unique across all sessions.
+-- Indexed on upper(participant_id) so it's enforced case-insensitively
+-- regardless of how a row was inserted.
+create unique index if not exists sessions_participant_id_unique_idx
+  on sessions (upper(participant_id));
+
 -- Row Level Security: the app writes/reads using the anon key.
 -- These policies allow the anon key to insert and read all rows.
 -- The /admin dashboard also reads through the anon key with a

@@ -16,6 +16,7 @@ export default function WelcomePage({ params }: { params: { mode: Mode } }) {
 
   const [participantId, setParticipantId] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [duplicateError, setDuplicateError] = useState(false);
 
   const { play: playWelcome } = useAudio([audioClip(mode, "welcome")]);
   const { play: playConfirmed } = useAudio([audioClip(mode, "id_confirmed")], () => {
@@ -30,9 +31,17 @@ export default function WelcomePage({ params }: { params: { mode: Mode } }) {
   const handleSubmit = async () => {
     if (!participantId || submitting) return;
     setSubmitting(true);
+    setDuplicateError(false);
 
-    const sessionId = await createSession(participantId, mode);
-    startSession(participantId, sessionId ?? "", mode);
+    const result = await createSession(participantId, mode);
+
+    if (result.status === "duplicate") {
+      setSubmitting(false);
+      setDuplicateError(true);
+      return;
+    }
+
+    startSession(participantId, result.status === "ok" ? result.sessionId : "", mode);
     playConfirmed();
   };
 
@@ -78,18 +87,36 @@ export default function WelcomePage({ params }: { params: { mode: Mode } }) {
             type="text"
             autoCapitalize="characters"
             value={participantId}
-            onChange={(e) =>
-              setParticipantId(e.target.value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase())
-            }
+            onChange={(e) => {
+              setParticipantId(e.target.value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase());
+              setDuplicateError(false);
+            }}
             placeholder={copy.participantIdPlaceholder}
             className={
               isAdult
-                ? "w-full text-center text-3xl border-2 border-adult-green rounded-none px-4 py-3 focus:outline-none placeholder:text-gray-300"
-                : "w-full text-center text-3xl border-4 border-kids-yellow rounded-2xl px-4 py-3 focus:outline-none placeholder:text-gray-300"
+                ? `w-full text-center text-3xl border-2 rounded-none px-4 py-3 focus:outline-none placeholder:text-gray-300 ${
+                    duplicateError ? "border-red-600" : "border-adult-green"
+                  }`
+                : `w-full text-center text-3xl border-4 rounded-2xl px-4 py-3 focus:outline-none placeholder:text-gray-300 ${
+                    duplicateError ? "border-red-500" : "border-kids-yellow"
+                  }`
             }
             autoFocus
           />
         </label>
+
+        {duplicateError && (
+          <p
+            role="alert"
+            className={
+              isAdult
+                ? "text-lg text-red-600 -mt-3 max-w-sm text-center"
+                : "text-xl text-red-500 -mt-3 max-w-sm text-center font-semibold"
+            }
+          >
+            {copy.duplicateIdError}
+          </p>
+        )}
 
         {participantId.length > 0 && (
           <button
