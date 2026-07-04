@@ -22,18 +22,20 @@ export default function SlideshowPage({ params }: { params: { mode: Mode } }) {
   const [answer, setAnswer] = useState<SlideshowAnswer | null>(null);
   const [confidence, setConfidence] = useState<number | null>(null);
   const [finishing, setFinishing] = useState(false);
+  const [pairAudioDone, setPairAudioDone] = useState(false);
 
   const clips =
     pairNumber === 1
       ? [audioClip(mode, "slideshow_intro"), audioClip(mode, "slideshow_pair_instruction")]
       : [audioClip(mode, "slideshow_pair_instruction")];
 
-  const { play: playPairAudio } = useAudio(clips);
+  const { play: playPairAudio } = useAudio(clips, () => setPairAudioDone(true));
   const { play: playComplete } = useAudio([audioClip(mode, "slideshow_complete")], () => {
     router.push(`/session/${mode}/game`);
   });
 
   useEffect(() => {
+    setPairAudioDone(false);
     playPairAudio();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pairNumber]);
@@ -100,25 +102,29 @@ export default function SlideshowPage({ params }: { params: { mode: Mode } }) {
         </p>
       </div>
 
-      <AnswerOptions
-        mode={mode}
-        selected={answer}
-        onSelect={setAnswer}
-        compact
-        options={[
-          { value: "same", label: copy.answerSame },
-          { value: "not_same", label: copy.answerNotSame },
-          { value: "not_sure", label: copy.answerNotSure },
-        ]}
-      />
+      {pairAudioDone && (
+        <>
+          <AnswerOptions
+            mode={mode}
+            selected={answer}
+            onSelect={setAnswer}
+            compact
+            options={[
+              { value: "same", label: copy.answerSame },
+              { value: "not_same", label: copy.answerNotSame },
+              { value: "not_sure", label: copy.answerNotSure },
+            ]}
+          />
 
-      <ConfidenceRating
-        mode={mode}
-        label={copy.confidenceLabel}
-        value={confidence}
-        onChange={setConfidence}
-        compact
-      />
+          <ConfidenceRating
+            mode={mode}
+            label={copy.confidenceLabel}
+            value={confidence}
+            onChange={setConfidence}
+            compact
+          />
+        </>
+      )}
 
       <div className="mt-4 mb-4 min-h-[3.5rem]">
         {answer && confidence !== null && (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Logo } from "@/components/Logo";
 import { CheckIcon, PartyIcon } from "@/components/icons";
@@ -16,7 +16,10 @@ export default function GoodbyePage({ params }: { params: { mode: Mode } }) {
   const router = useRouter();
   const { clearSession } = useSession();
 
-  const { play: playGoodbye } = useAudio([audioClip(mode, "goodbye")]);
+  const [goodbyeAudioDone, setGoodbyeAudioDone] = useState(false);
+  const { play: playGoodbye } = useAudio([audioClip(mode, "goodbye")], () =>
+    setGoodbyeAudioDone(true)
+  );
 
   useEffect(() => {
     playGoodbye();
@@ -48,17 +51,21 @@ export default function GoodbyePage({ params }: { params: { mode: Mode } }) {
       >
         {copy.goodbyeBody}
       </p>
-      <button
-        onClick={handleFinish}
-        className={
-          isAdult
-            ? "font-adult text-xl px-10 py-4 bg-adult-green text-white rounded-none hover:opacity-90 transition-opacity inline-flex items-center gap-2"
-            : "font-kids text-xl px-10 py-5 bg-kids-coral text-white rounded-full shadow-md hover:scale-105 transition-transform inline-flex items-center gap-2 animate-bounce-in"
-        }
-      >
-        {copy.finishSession}
-        <CheckIcon className={isAdult ? "w-5 h-5" : "w-6 h-6"} />
-      </button>
+      <div className="min-h-[3.5rem]">
+        {goodbyeAudioDone && (
+          <button
+            onClick={handleFinish}
+            className={
+              isAdult
+                ? "font-adult text-xl px-10 py-4 bg-adult-green text-white rounded-none hover:opacity-90 transition-opacity inline-flex items-center gap-2"
+                : "font-kids text-xl px-10 py-5 bg-kids-coral text-white rounded-full shadow-md hover:scale-105 transition-transform inline-flex items-center gap-2 animate-bounce-in"
+            }
+          >
+            {copy.finishSession}
+            <CheckIcon className={isAdult ? "w-5 h-5" : "w-6 h-6"} />
+          </button>
+        )}
+      </div>
     </main>
   );
 }

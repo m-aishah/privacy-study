@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { Mode, triggerPipelineStop } from "@/lib/supabase";
 import { content } from "@/lib/content";
 import { useSession } from "@/context/SessionContext";
@@ -10,12 +10,21 @@ import { Modal } from "./Modal";
 type Warning = "back" | "reload" | null;
 
 /**
- * Blocks browser back navigation (by re-pushing the current entry whenever
- * a popstate fires) and keyboard-triggered reloads (F5, Ctrl/Cmd+R),
- * showing an in-app styled warning instead for both. Both warnings offer
- * a secondary "restart" action, since neither going back nor refreshing
- * has a meaningful "resume where you left off" state in this app — the
- * only real option besides staying is starting the session over.
+ * Blocks browser back navigation and keyboard-triggered reloads (F5,
+ * Ctrl/Cmd+R), showing an in-app styled warning instead of either. Both
+ * warnings offer a secondary "restart" action, since neither going back
+ * nor refreshing has a meaningful "resume where you left off" state in
+ * this app — the only real option besides staying is starting over.
+ *
+ * Every step of the session (welcome -> slideshow -> game -> ...) is a
+ * real route change, which pushes its own history entry. Without extra
+ * handling, a back press from deep in the flow would land on whatever
+ * real page sits behind it (e.g. the welcome screen) and briefly render
+ * it before the popstate handler catches up — a visible flash back to a
+ * previous step. To prevent that, a duplicate of the *current* page is
+ * pushed onto history after every route change, so the entry directly
+ * behind the current one is always a copy of itself: back can only ever
+ * land on "the same page" (no visible change) before the modal appears.
  *
  * There is no way to do the same for the browser's own reload button or
  * tab-close — those only ever trigger the native, unstylable
@@ -27,7 +36,12 @@ export function NavGuard({ mode }: { mode: Mode }) {
   const [warning, setWarning] = useState<Warning>(null);
   const copy = content[mode];
   const router = useRouter();
+  const pathname = usePathname();
   const { clearSession } = useSession();
+
+  useEffect(() => {
+    window.history.pushState(null, "", window.location.href);
+  }, [pathname]);
 
   useEffect(() => {
     const blockPop = () => {
@@ -35,7 +49,6 @@ export function NavGuard({ mode }: { mode: Mode }) {
       setWarning("back");
     };
 
-    window.history.pushState(null, "", window.location.href);
     window.addEventListener("popstate", blockPop);
 
     const blockReloadKeys = (e: KeyboardEvent) => {

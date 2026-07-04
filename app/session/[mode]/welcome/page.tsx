@@ -17,8 +17,11 @@ export default function WelcomePage({ params }: { params: { mode: Mode } }) {
   const [participantId, setParticipantId] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [duplicateError, setDuplicateError] = useState(false);
+  const [welcomeAudioDone, setWelcomeAudioDone] = useState(false);
 
-  const { play: playWelcome } = useAudio([audioClip(mode, "welcome")]);
+  const { play: playWelcome } = useAudio([audioClip(mode, "welcome")], () =>
+    setWelcomeAudioDone(true)
+  );
   const { play: playConfirmed } = useAudio([audioClip(mode, "id_confirmed")], () => {
     router.push(`/session/${mode}/slideshow`);
   });
@@ -118,7 +121,7 @@ export default function WelcomePage({ params }: { params: { mode: Mode } }) {
           </p>
         )}
 
-        {participantId.length > 0 && (
+        {participantId.length > 0 && welcomeAudioDone && (
           <button
             onClick={handleSubmit}
             disabled={submitting}

@@ -23,27 +23,51 @@ export default function GamePage({ params }: { params: { mode: Mode } }) {
   const copy = content[mode];
   const router = useRouter();
   const videoRef = useRef<HTMLVideoElement>(null);
+  const introQueuedRef = useRef(false);
 
   const [phase, setPhase] = useState<Phase>("action");
   const [actionNumber, setActionNumber] = useState(1);
+  const [actionAudioDone, setActionAudioDone] = useState(false);
+  const [standUpAudioDone, setStandUpAudioDone] = useState(false);
 
-  const { play: playIntro } = useAudio([audioClip(mode, "game_intro")]);
-  const { play: playActionCue } = useAudio([audioClip(mode, `action_${actionNumber}_cue`)]);
-  const { play: playStandUp } = useAudio([audioClip(mode, "stand_up")]);
+  // game_intro only ever plays once, chained in front of the first action's
+  // cue in the same queue so the two never overlap (useAudio guarantees
+  // sequential, non-overlapping playback within a single queue, but two
+  // separate useAudio calls firing at the same time would still overlap
+  // each other).
+  const actionClips = introQueuedRef.current
+    ? [audioClip(mode, `action_${actionNumber}_cue`)]
+    : [audioClip(mode, "game_intro"), audioClip(mode, `action_${actionNumber}_cue`)];
+
+  const { play: playActionCue } = useAudio(actionClips, () => setActionAudioDone(true));
+  const { play: playStandUp } = useAudio([audioClip(mode, "stand_up")], () =>
+    setStandUpAudioDone(true)
+  );
   const { play: playComplete } = useAudio([audioClip(mode, "game_complete")], () => {
     router.push(`/session/${mode}/seeyourself`);
   });
 
   useEffect(() => {
-    playIntro();
     triggerPipelineStart();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    if (phase === "action") playActionCue();
+    if (phase === "action") {
+      setActionAudioDone(false);
+      playActionCue();
+      introQueuedRef.current = true;
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [actionNumber, phase]);
+
+  useEffect(() => {
+    if (phase === "standup") {
+      setStandUpAudioDone(false);
+      playStandUp();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase]);
 
   const isAdult = mode === "adult";
 
@@ -56,7 +80,6 @@ export default function GamePage({ params }: { params: { mode: Mode } }) {
 
     if (actionNumber === STAND_UP_AFTER_ACTION) {
       setPhase("standup");
-      playStandUp();
       return;
     }
 
@@ -91,7 +114,11 @@ export default function GamePage({ params }: { params: { mode: Mode } }) {
         <p className={isAdult ? "text-xl text-adult-text max-w-xl" : "text-2xl text-[#1A1A1A] max-w-xl"}>
           {copy.standUpBody}
         </p>
-        <NextButton mode={mode} label={copy.standUpReady} onClick={handleReady} />
+        <div className="min-h-[3.5rem]">
+          {standUpAudioDone && (
+            <NextButton mode={mode} label={copy.standUpReady} onClick={handleReady} />
+          )}
+        </div>
       </main>
     );
   }
@@ -121,7 +148,11 @@ export default function GamePage({ params }: { params: { mode: Mode } }) {
         </div>
 
         <div className="flex flex-col items-center justify-center gap-4">
-          <NextButton mode={mode} label={copy.next} onClick={handleNext} />
+          <div className="min-h-[3.5rem]">
+            {actionAudioDone && (
+              <NextButton mode={mode} label={copy.next} onClick={handleNext} />
+            )}
+          </div>
           <ReplayButton mode={mode} label={copy.replay} onClick={handleReplay} />
         </div>
       </div>

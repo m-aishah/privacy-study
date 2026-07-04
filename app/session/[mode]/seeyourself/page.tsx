@@ -21,8 +21,11 @@ export default function SeeYourselfPage({ params }: { params: { mode: Mode } }) 
   const [answer, setAnswer] = useState<SeeYourselfAnswer | null>(null);
   const [confidence, setConfidence] = useState<number | null>(null);
   const [finishing, setFinishing] = useState(false);
+  const [introAudioDone, setIntroAudioDone] = useState(false);
 
-  const { play: playIntro } = useAudio([audioClip(mode, "see_yourself_intro")]);
+  const { play: playIntro } = useAudio([audioClip(mode, "see_yourself_intro")], () =>
+    setIntroAudioDone(true)
+  );
   const { play: playComplete } = useAudio([audioClip(mode, "see_yourself_complete")], () => {
     router.push(`/session/${mode}/questionnaire`);
   });
@@ -82,25 +85,33 @@ export default function SeeYourselfPage({ params }: { params: { mode: Mode } }) 
         {copy.seeYourselfQuestion}
       </p>
 
-      <AnswerOptions
-        mode={mode}
-        selected={answer}
-        onSelect={setAnswer}
-        compact
-        options={[
-          { value: "yes", label: copy.seeYourselfYes, icon: <SmileIcon className="w-6 h-6" /> },
-          { value: "no", label: copy.seeYourselfNo, icon: <XCircleIcon className="w-6 h-6" /> },
-          { value: "not_sure", label: copy.seeYourselfNotSure, icon: <QuestionMarkIcon className="w-6 h-6" /> },
-        ]}
-      />
+      {introAudioDone && (
+        <>
+          <AnswerOptions
+            mode={mode}
+            selected={answer}
+            onSelect={setAnswer}
+            compact
+            options={[
+              { value: "yes", label: copy.seeYourselfYes, icon: <SmileIcon className="w-6 h-6" /> },
+              { value: "no", label: copy.seeYourselfNo, icon: <XCircleIcon className="w-6 h-6" /> },
+              {
+                value: "not_sure",
+                label: copy.seeYourselfNotSure,
+                icon: <QuestionMarkIcon className="w-6 h-6" />,
+              },
+            ]}
+          />
 
-      <ConfidenceRating
-        mode={mode}
-        label={copy.confidenceLabel}
-        value={confidence}
-        onChange={setConfidence}
-        compact
-      />
+          <ConfidenceRating
+            mode={mode}
+            label={copy.confidenceLabel}
+            value={confidence}
+            onChange={setConfidence}
+            compact
+          />
+        </>
+      )}
 
       <div className="mt-4 mb-4 min-h-[3.5rem]">
         {answer && confidence !== null && (
