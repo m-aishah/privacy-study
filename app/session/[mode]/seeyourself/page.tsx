@@ -45,12 +45,12 @@ export default function SeeYourselfPage({ params }: { params: { mode: Mode } }) 
   };
 
   return (
-    <main className="min-h-screen flex flex-col items-center pb-16 pt-10 px-4">
+    <main className="h-screen flex flex-col items-center overflow-y-auto py-2 px-4">
       <h1
         className={
           isAdult
-            ? "text-3xl font-semibold text-adult-navy mb-6 text-center"
-            : "text-3xl font-extrabold text-kids-coral mb-6 text-center"
+            ? "text-2xl sm:text-3xl font-semibold text-adult-navy mb-2 text-center"
+            : "text-2xl sm:text-3xl font-extrabold text-kids-coral mb-2 text-center"
         }
       >
         {copy.seeYourselfHeading}
@@ -59,8 +59,8 @@ export default function SeeYourselfPage({ params }: { params: { mode: Mode } }) 
       <div
         className={
           isAdult
-            ? "relative w-full max-w-md aspect-square border-2 border-adult-navy"
-            : "relative w-full max-w-md aspect-square rounded-3xl overflow-hidden border-4 border-kids-teal"
+            ? "relative w-[min(60vw,32vh)] h-[min(60vw,32vh)] border-2 border-adult-green"
+            : "relative w-[min(60vw,32vh)] h-[min(60vw,32vh)] rounded-3xl overflow-hidden border-4 border-kids-teal"
         }
       >
         <Image
@@ -74,8 +74,8 @@ export default function SeeYourselfPage({ params }: { params: { mode: Mode } }) 
       <p
         className={
           isAdult
-            ? "text-xl text-adult-text mt-6 text-center"
-            : "text-2xl text-[#1A1A1A] mt-6 text-center"
+            ? "text-lg sm:text-xl text-adult-text mt-3 text-center"
+            : "text-xl sm:text-2xl text-[#1A1A1A] mt-3 text-center"
         }
       >
         {copy.seeYourselfQuestion}
@@ -85,6 +85,7 @@ export default function SeeYourselfPage({ params }: { params: { mode: Mode } }) 
         mode={mode}
         selected={answer}
         onSelect={setAnswer}
+        compact
         options={[
           { value: "yes", label: copy.seeYourselfYes },
           { value: "no", label: copy.seeYourselfNo },
@@ -97,13 +98,14 @@ export default function SeeYourselfPage({ params }: { params: { mode: Mode } }) 
         label={copy.confidenceLabel}
         value={confidence}
         onChange={setConfidence}
+        compact
       />
 
-      {answer && confidence !== null && (
-        <div className="mt-10">
+      <div className="mt-4 mb-4 min-h-[3.5rem]">
+        {answer && confidence !== null && (
           <NextButton mode={mode} label={copy.next} onClick={handleNext} />
-        </div>
-      )}
+        )}
+      </div>
     </main>
   );
 }

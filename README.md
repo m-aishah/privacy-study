@@ -1,5 +1,7 @@
 # PrivacyStudy
 
+**Privacy-Preserving Video Anonymization for Human-Robot Interaction Research**
+
 Research session app for the UNBC Robotics and Human-Robot Interaction group
 (supervised by Dr. Shruti Chandra), used to run in-person evaluations of a
 real-time video anonymization pipeline. Built with Next.js 14 (App Router),

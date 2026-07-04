@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { NavGuard } from "@/components/NavGuard";
+import { ChildrenDecor } from "@/components/ChildrenDecor";
 import { Mode } from "@/lib/supabase";
 
 export function generateStaticParams() {
@@ -23,11 +24,12 @@ export default function ModeLayout({
       className={
         mode === "adult"
           ? "min-h-screen bg-adult-bg font-adult"
-          : "min-h-screen bg-kids-bg font-kids"
+          : "relative min-h-screen bg-kids-bg font-kids"
       }
     >
-      <NavGuard />
-      {children}
+      <NavGuard mode={mode} />
+      {mode === "children" && <ChildrenDecor />}
+      <div className="relative z-10">{children}</div>
     </div>
   );
 }

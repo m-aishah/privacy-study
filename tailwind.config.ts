@@ -32,10 +32,20 @@ const config: Config = {
           "0%": { opacity: "0" },
           "100%": { opacity: "1" },
         },
+        "stand-up-wiggle": {
+          "0%, 100%": { transform: "translateY(0) rotate(-6deg)" },
+          "50%": { transform: "translateY(-14px) rotate(6deg)" },
+        },
+        drift: {
+          "0%, 100%": { transform: "translateX(0)" },
+          "50%": { transform: "translateX(14px)" },
+        },
       },
       animation: {
         "bounce-in": "bounce-in 0.4s ease-out",
         "fade-in": "fade-in 0.35s ease-in",
+        "stand-up-wiggle": "stand-up-wiggle 1s ease-in-out infinite",
+        drift: "drift 6s ease-in-out infinite",
       },
     },
   },

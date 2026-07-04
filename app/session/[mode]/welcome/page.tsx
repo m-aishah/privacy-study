@@ -68,7 +68,7 @@ export default function WelcomePage({ params }: { params: { mode: Mode } }) {
           <span
             className={
               isAdult
-                ? "block text-xl text-adult-navy mb-2"
+                ? "block text-xl text-adult-green mb-2"
                 : "block text-2xl text-kids-teal font-bold mb-2"
             }
           >
@@ -76,14 +76,16 @@ export default function WelcomePage({ params }: { params: { mode: Mode } }) {
           </span>
           <input
             type="text"
-            inputMode="numeric"
-            pattern="[0-9]*"
+            autoCapitalize="characters"
             value={participantId}
-            onChange={(e) => setParticipantId(e.target.value.replace(/\D/g, ""))}
+            onChange={(e) =>
+              setParticipantId(e.target.value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase())
+            }
+            placeholder={copy.participantIdPlaceholder}
             className={
               isAdult
-                ? "w-full text-center text-3xl border-2 border-adult-navy rounded-none px-4 py-3 focus:outline-none"
-                : "w-full text-center text-3xl border-4 border-kids-yellow rounded-2xl px-4 py-3 focus:outline-none"
+                ? "w-full text-center text-3xl border-2 border-adult-green rounded-none px-4 py-3 focus:outline-none placeholder:text-gray-300"
+                : "w-full text-center text-3xl border-4 border-kids-yellow rounded-2xl px-4 py-3 focus:outline-none placeholder:text-gray-300"
             }
             autoFocus
           />

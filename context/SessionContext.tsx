@@ -11,22 +11,26 @@ type SessionState = {
 
 type SessionContextValue = SessionState & {
   startSession: (participantId: string, sessionId: string, mode: Mode) => void;
+  clearSession: () => void;
 };
 
 const SessionContext = createContext<SessionContextValue | null>(null);
 
+const EMPTY_STATE: SessionState = {
+  participantId: null,
+  sessionId: null,
+  mode: null,
+};
+
 export function SessionProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<SessionState>({
-    participantId: null,
-    sessionId: null,
-    mode: null,
-  });
+  const [state, setState] = useState<SessionState>(EMPTY_STATE);
 
   const value = useMemo<SessionContextValue>(
     () => ({
       ...state,
       startSession: (participantId, sessionId, mode) =>
         setState({ participantId, sessionId, mode }),
+      clearSession: () => setState(EMPTY_STATE),
     }),
     [state]
   );

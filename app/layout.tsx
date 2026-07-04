@@ -8,7 +8,7 @@ const nunito = Nunito({ subsets: ["latin"], variable: "--font-kids" });
 
 export const metadata: Metadata = {
   title: "PrivacyStudy",
-  description: "UNBC Robotics and Human-Robot Interaction research study application",
+  description: "Privacy-Preserving Video Anonymization for Human-Robot Interaction Research (UNBC)",
   icons: {
     icon: "/images/unbc_favicon_small_logo.jpeg",
   },

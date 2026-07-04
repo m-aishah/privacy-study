@@ -60,26 +60,26 @@ export default function SlideshowPage({ params }: { params: { mode: Mode } }) {
   };
 
   return (
-    <main className="min-h-screen flex flex-col items-center pb-16">
-      <ProgressIndicator mode={mode} current={pairNumber} total={TOTAL_PAIRS} />
+    <main className="h-screen flex flex-col items-center overflow-y-auto py-2">
+      <ProgressIndicator mode={mode} current={pairNumber} total={TOTAL_PAIRS} compact />
 
-      <div className="w-full max-w-3xl px-4 mt-8 text-center">
+      <div className="w-full max-w-3xl px-4 mt-2 text-center">
         <h1
           className={
             isAdult
-              ? "text-3xl font-semibold text-adult-navy mb-6"
-              : "text-3xl font-extrabold text-kids-coral mb-6"
+              ? "text-2xl sm:text-3xl font-semibold text-adult-navy mb-3"
+              : "text-2xl sm:text-3xl font-extrabold text-kids-coral mb-3"
           }
         >
           {copy.slideshowIntroHeading}
         </h1>
 
-        <div className="grid grid-cols-2 gap-4 sm:gap-8">
+        <div className="flex justify-center gap-4 sm:gap-8">
           <div
             className={
               isAdult
-                ? "relative aspect-square border-2 border-adult-navy"
-                : "relative aspect-square rounded-3xl overflow-hidden border-4 border-kids-teal"
+                ? "relative w-[min(38vw,32vh)] h-[min(38vw,32vh)] border-2 border-adult-green"
+                : "relative w-[min(38vw,32vh)] h-[min(38vw,32vh)] rounded-3xl overflow-hidden border-4 border-kids-teal"
             }
           >
             <Image src={images.a} alt={`Pair ${pairNumber} - image A`} fill className="object-cover" />
@@ -87,19 +87,15 @@ export default function SlideshowPage({ params }: { params: { mode: Mode } }) {
           <div
             className={
               isAdult
-                ? "relative aspect-square border-2 border-adult-navy"
-                : "relative aspect-square rounded-3xl overflow-hidden border-4 border-kids-teal"
+                ? "relative w-[min(38vw,32vh)] h-[min(38vw,32vh)] border-2 border-adult-green"
+                : "relative w-[min(38vw,32vh)] h-[min(38vw,32vh)] rounded-3xl overflow-hidden border-4 border-kids-teal"
             }
           >
             <Image src={images.b} alt={`Pair ${pairNumber} - image B`} fill className="object-cover" />
           </div>
         </div>
 
-        <p
-          className={
-            isAdult ? "text-xl text-adult-text mt-6" : "text-2xl text-[#1A1A1A] mt-6"
-          }
-        >
+        <p className={isAdult ? "text-lg sm:text-xl text-adult-text mt-3" : "text-xl sm:text-2xl text-[#1A1A1A] mt-3"}>
           {copy.slideshowQuestion}
         </p>
       </div>
@@ -108,6 +104,7 @@ export default function SlideshowPage({ params }: { params: { mode: Mode } }) {
         mode={mode}
         selected={answer}
         onSelect={setAnswer}
+        compact
         options={[
           { value: "same", label: copy.answerSame },
           { value: "not_same", label: copy.answerNotSame },
@@ -120,13 +117,14 @@ export default function SlideshowPage({ params }: { params: { mode: Mode } }) {
         label={copy.confidenceLabel}
         value={confidence}
         onChange={setConfidence}
+        compact
       />
 
-      {answer && confidence !== null && (
-        <div className="mt-10">
+      <div className="mt-4 mb-4 min-h-[3.5rem]">
+        {answer && confidence !== null && (
           <NextButton mode={mode} label={copy.next} onClick={handleNext} />
-        </div>
-      )}
+        )}
+      </div>
     </main>
   );
 }
