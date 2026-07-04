@@ -1,10 +1,13 @@
 import { Mode } from "./supabase";
 
-export const AUDIO_BASE = (mode: Mode) => `/audio/${mode === "adult" ? "adult" : "children"}`;
+export const AUDIO_BASE = (mode: Mode) =>
+  `/audio/${mode === "adult" ? "adult" : "children"}`;
 
-export const audioClip = (mode: Mode, name: string) => `${AUDIO_BASE(mode)}/${name}.mp3`;
+export const audioClip = (mode: Mode, name: string) =>
+  `${AUDIO_BASE(mode)}/${name}.mp3`;
 
-export const STUDY_TITLE = "Privacy-Preserving Video Anonymization for Human-Robot Interaction Research";
+export const STUDY_TITLE =
+  "Privacy-Preserving Video Anonymization for Human-Robot Interaction Research";
 
 export const content = {
   adult: {
@@ -51,15 +54,18 @@ export const content = {
     reloadWarningDismiss: "Okay, stay here",
     reloadWarningConfirm: "Restart Session",
     errorTitle: "Something went wrong",
-    errorBody: "Please let your session coordinator know. They can help get things back on track.",
+    errorBody:
+      "Please let your session coordinator know. They can help get things back on track.",
     errorRetry: "Try Again",
   },
   children: {
     welcomeHeading: "Hi there!",
-    welcomeBody: "We're so happy you're here! Type in your special ID to start the fun.",
+    welcomeBody:
+      "We're so happy you're here! Type in your special ID to start the fun.",
     participantIdLabel: "Type your ID",
     participantIdPlaceholder: "e.g. C1",
-    duplicateIdError: "That ID has already been used! Ask the grown-up in the room for the right one.",
+    duplicateIdError:
+      "That ID has already been used! Ask the grown-up in the room for the right one.",
     submit: "Let's Go!",
     slideshowIntroHeading: "Spot the Match!",
     slideshowQuestion: "Are these two pictures the same person?",
@@ -70,7 +76,8 @@ export const content = {
     next: "Next",
     replay: "Watch Again",
     standUpHeading: "Wiggle Break!",
-    standUpBody: "Stand up and give yourself some space — it's time to move around a little!",
+    standUpBody:
+      "Stand up and give yourself some space. It's time to move around a little!",
     standUpReady: "I'm Ready!",
     seeYourselfHeading: "Look Closely!",
     seeYourselfQuestion: "Is this you?",
@@ -78,22 +85,26 @@ export const content = {
     seeYourselfNo: "No",
     seeYourselfNotSure: "Not Sure",
     questionnaireHeading: "Almost Done!",
-    questionnaireBody: "Please answer a few more fun questions below with a grown-up if you need help.",
+    questionnaireBody:
+      "Please answer a few more fun questions below with a grown-up if you need help.",
     questionnaireDone: "All Done With Questions!",
     goodbyeHeading: "You Did Amazing!",
     goodbyeBody:
       "Thank you so much for playing with us today! You were super helpful. You can tell the grown-up in the room that you're finished.",
     finishSession: "All Done!",
     leaveWarningTitle: "Whoops, hold on!",
-    leaveWarningBody: "We can't go back during this game — going back means starting over from the beginning!",
+    leaveWarningBody:
+      "We can't go back during this game. Going back means starting over from the beginning!",
     leaveWarningDismiss: "Okay!",
     leaveWarningConfirm: "Start Over",
     reloadWarningTitle: "Wait, don't refresh!",
-    reloadWarningBody: "Refreshing will start the game over from the very beginning!",
+    reloadWarningBody:
+      "Refreshing will start the game over from the very beginning!",
     reloadWarningDismiss: "Okay!",
     reloadWarningConfirm: "Start Over",
     errorTitle: "Oops!",
-    errorBody: "Something went a little wonky. Let's ask the grown-up in the room for help!",
+    errorBody:
+      "Something went a little wonky. Let's ask the grown-up in the room for help!",
     errorRetry: "Try Again!",
   },
 } as const;
