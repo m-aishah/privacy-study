@@ -45,7 +45,7 @@ export default function SeeYourselfPage({ params }: { params: { mode: Mode } }) 
   };
 
   return (
-    <main className="h-screen flex flex-col items-center overflow-y-auto py-2 px-4">
+    <main className="h-screen flex flex-col items-center justify-center overflow-y-auto py-2 px-4">
       <h1
         className={
           isAdult
@@ -59,8 +59,8 @@ export default function SeeYourselfPage({ params }: { params: { mode: Mode } }) 
       <div
         className={
           isAdult
-            ? "relative w-[min(60vw,32vh)] h-[min(60vw,32vh)] border-2 border-adult-green"
-            : "relative w-[min(60vw,32vh)] h-[min(60vw,32vh)] rounded-3xl overflow-hidden border-4 border-kids-teal"
+            ? "relative w-[min(55vw,44vh)] h-[min(55vw,44vh)] border-2 border-adult-green"
+            : "relative w-[min(55vw,44vh)] h-[min(55vw,44vh)] rounded-3xl overflow-hidden border-4 border-kids-teal"
         }
       >
         <Image
@@ -74,8 +74,8 @@ export default function SeeYourselfPage({ params }: { params: { mode: Mode } }) 
       <p
         className={
           isAdult
-            ? "text-lg sm:text-xl text-adult-text mt-3 text-center"
-            : "text-xl sm:text-2xl text-[#1A1A1A] mt-3 text-center"
+            ? "text-lg sm:text-xl text-adult-text mt-2 text-center"
+            : "text-xl sm:text-2xl text-[#1A1A1A] mt-2 text-center"
         }
       >
         {copy.seeYourselfQuestion}

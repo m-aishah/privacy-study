@@ -15,13 +15,13 @@ export function AnswerOptions<T extends string>({
 }) {
   if (mode === "adult") {
     return (
-      <div className={`w-full max-w-2xl mx-auto grid gap-3 sm:grid-cols-3 ${compact ? "mt-3" : "mt-8"}`}>
+      <div className={`w-full max-w-2xl mx-auto grid gap-2 sm:grid-cols-3 ${compact ? "mt-2" : "mt-8"}`}>
         {options.map((opt) => (
           <button
             key={opt.value}
             onClick={() => onSelect(opt.value)}
             className={`font-adult text-xl border-2 rounded-none transition-colors ${
-              compact ? "px-6 py-3" : "px-6 py-6"
+              compact ? "px-6 py-2" : "px-6 py-6"
             } ${
               selected === opt.value
                 ? "bg-adult-green text-white border-adult-green"
@@ -36,13 +36,13 @@ export function AnswerOptions<T extends string>({
   }
 
   return (
-    <div className={`w-full max-w-2xl mx-auto grid gap-3 sm:grid-cols-3 ${compact ? "mt-3" : "mt-8"}`}>
+    <div className={`w-full max-w-2xl mx-auto grid gap-2 sm:grid-cols-3 ${compact ? "mt-2" : "mt-8"}`}>
       {options.map((opt) => (
         <button
           key={opt.value}
           onClick={() => onSelect(opt.value)}
           className={`font-kids text-xl rounded-3xl border-4 transition-all ${
-            compact ? "px-6 py-4" : "px-6 py-8"
+            compact ? "px-6 py-2.5" : "px-6 py-8"
           } ${
             selected === opt.value
               ? "bg-kids-yellow border-kids-yellow text-[#1A1A1A] scale-105 shadow-lg"
