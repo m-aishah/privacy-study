@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAudio } from "@/hooks/useAudio";
 import { CheckIcon } from "@/components/icons";
@@ -14,7 +14,10 @@ export default function QuestionnairePage({ params }: { params: { mode: Mode } }
   const router = useRouter();
   const { participantId } = useSession();
 
-  const { play: playIntro } = useAudio([audioClip(mode, "questionnaire_intro")]);
+  const [introAudioDone, setIntroAudioDone] = useState(false);
+  const { play: playIntro } = useAudio([audioClip(mode, "questionnaire_intro")], () =>
+    setIntroAudioDone(true)
+  );
 
   useEffect(() => {
     playIntro();
@@ -66,10 +69,11 @@ export default function QuestionnairePage({ params }: { params: { mode: Mode } }
       <div className="sticky bottom-0 bg-inherit px-4 py-6 flex justify-center">
         <button
           onClick={() => router.push(`/session/${mode}/goodbye`)}
+          disabled={!introAudioDone}
           className={
             isAdult
-              ? "font-adult text-xl px-10 py-4 bg-adult-green text-white rounded-none hover:opacity-90 transition-opacity shadow-lg inline-flex items-center gap-2"
-              : "font-kids text-xl px-10 py-5 bg-kids-coral text-white rounded-full shadow-lg hover:scale-105 transition-transform inline-flex items-center gap-2"
+              ? "font-adult text-xl px-10 py-4 bg-adult-green text-white rounded-none hover:opacity-90 transition-opacity shadow-lg inline-flex items-center gap-2 disabled:opacity-50"
+              : "font-kids text-xl px-10 py-5 bg-kids-coral text-white rounded-full shadow-lg hover:scale-105 transition-transform inline-flex items-center gap-2 disabled:opacity-50"
           }
         >
           {copy.questionnaireDone}

@@ -10,12 +10,21 @@ const VOLUME = 0.85;
  * is skipped silently so a missing asset never blocks the session.
  */
 export function useAudio(clips: string[], onComplete?: () => void) {
-  const elementsRef = useRef<HTMLAudioElement[]>([]);
-  const indexRef = useRef(0);
   const onCompleteRef = useRef(onComplete);
   onCompleteRef.current = onComplete;
 
+  const elementsRef = useRef<HTMLAudioElement[]>([]);
+  const playImplRef = useRef<(() => void) | null>(null);
+
   useEffect(() => {
+    // `active` is local to this specific effect generation, unlike a ref it
+    // cannot be reset by a later generation's setup. Each generation (e.g.
+    // React StrictMode's dev-only mount->cleanup->mount cycle, or a real
+    // clips change) gets its own isolated flag, so a stale async callback
+    // from a disposed generation (a rejected play() promise settling after
+    // cleanup already ran, for instance) can never affect the current one.
+    let active = true;
+
     const elements = clips.map((src) => {
       const el = new Audio(src);
       el.preload = "auto";
@@ -23,9 +32,39 @@ export function useAudio(clips: string[], onComplete?: () => void) {
       return el;
     });
     elementsRef.current = elements;
-    indexRef.current = 0;
+
+    function playFrom(startIndex: number) {
+      if (!active) return;
+
+      if (startIndex >= elements.length) {
+        onCompleteRef.current?.();
+        return;
+      }
+
+      const el = elements[startIndex];
+
+      const handleEndedOrError = () => {
+        el.removeEventListener("ended", handleEndedOrError);
+        el.removeEventListener("error", handleEndedOrError);
+        if (!active) return;
+        playFrom(startIndex + 1);
+      };
+
+      el.addEventListener("ended", handleEndedOrError);
+      el.addEventListener("error", handleEndedOrError);
+
+      el.currentTime = 0;
+      el.play().catch(() => {
+        if (!active) return;
+        handleEndedOrError();
+      });
+    }
+
+    playImplRef.current = () => playFrom(0);
 
     return () => {
+      active = false;
+      playImplRef.current = null;
       elements.forEach((el) => {
         el.pause();
         el.src = "";
@@ -35,34 +74,9 @@ export function useAudio(clips: string[], onComplete?: () => void) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clips.join("|")]);
 
-  const playFrom = useCallback((startIndex: number) => {
-    const elements = elementsRef.current;
-    if (startIndex >= elements.length) {
-      onCompleteRef.current?.();
-      return;
-    }
-
-    indexRef.current = startIndex;
-    const el = elements[startIndex];
-
-    const handleEndedOrError = () => {
-      el.removeEventListener("ended", handleEndedOrError);
-      el.removeEventListener("error", handleEndedOrError);
-      playFrom(startIndex + 1);
-    };
-
-    el.addEventListener("ended", handleEndedOrError);
-    el.addEventListener("error", handleEndedOrError);
-
-    el.currentTime = 0;
-    el.play().catch(() => {
-      handleEndedOrError();
-    });
-  }, []);
-
   const play = useCallback(() => {
-    playFrom(0);
-  }, [playFrom]);
+    playImplRef.current?.();
+  }, []);
 
   const stop = useCallback(() => {
     elementsRef.current.forEach((el) => {
