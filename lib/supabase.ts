@@ -39,7 +39,17 @@ export type SeeYourselfResponseRow = {
   created_at: string;
 };
 
-export async function createSession(participantId: string, mode: Mode): Promise<string | null> {
+export type CreateSessionResult =
+  | { status: "ok"; sessionId: string }
+  | { status: "duplicate" }
+  | { status: "error" };
+
+const POSTGRES_UNIQUE_VIOLATION = "23505";
+
+export async function createSession(
+  participantId: string,
+  mode: Mode
+): Promise<CreateSessionResult> {
   try {
     const { data, error } = await supabase
       .from("sessions")
@@ -48,14 +58,18 @@ export async function createSession(participantId: string, mode: Mode): Promise<
       .single();
 
     if (error) {
+      if (error.code === POSTGRES_UNIQUE_VIOLATION) {
+        return { status: "duplicate" };
+      }
       console.error("createSession error:", error);
-      return null;
+      return { status: "error" };
     }
 
-    return data?.id ?? null;
+    if (!data?.id) return { status: "error" };
+    return { status: "ok", sessionId: data.id };
   } catch (err) {
     console.error("createSession threw:", err);
-    return null;
+    return { status: "error" };
   }
 }
 
@@ -102,5 +116,15 @@ export async function triggerPipelineStart(): Promise<void> {
     await fetch(`${ngrokUrl.replace(/\/$/, "")}/start`, { method: "POST" });
   } catch (err) {
     console.error("triggerPipelineStart threw:", err);
+  }
+}
+
+export async function triggerPipelineStop(): Promise<void> {
+  const ngrokUrl = process.env.NEXT_PUBLIC_NGROK_URL;
+  if (!ngrokUrl) return;
+  try {
+    await fetch(`${ngrokUrl.replace(/\/$/, "")}/stop`, { method: "POST" });
+  } catch (err) {
+    console.error("triggerPipelineStop threw:", err);
   }
 }

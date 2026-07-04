@@ -18,9 +18,16 @@ Tailwind CSS, and Supabase, deployed on Vercel.
    - Row Level Security policies that allow the app's anon key to insert and
      read rows (the `/admin` dashboard also reads through the anon key, gated
      by the separate `ADMIN_PASSWORD` app-level check).
+   - A unique index on participant ID (case-insensitive) so the same ID can't
+     be used for two sessions.
 
 You can re-run the script safely — it uses `if not exists` / `drop policy if
 exists` guards.
+
+If you already ran an older version of `schema.sql` and don't want to re-run
+the whole file, apply just the new pieces from
+[`sql/migrations/`](./sql/migrations) instead — each migration file is
+numbered and safe to run once.
 
 ## 2. Environment variables — where to get each one
 
