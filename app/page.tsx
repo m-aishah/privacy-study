@@ -12,7 +12,7 @@ export default function HomePage() {
           {STUDY_TITLE}
         </p>
         <h1 className="text-3xl sm:text-4xl font-semibold text-[#1F4E79]">
-          PrivacyStudy — Session Setup
+          Session Setup
         </h1>
         <p className="text-lg sm:text-xl text-[#1A1A1A] mt-3">
           Select the session mode for this participant.
@@ -27,7 +27,9 @@ export default function HomePage() {
           <span className="text-5xl" aria-hidden>
             🧑‍🤝‍🧑
           </span>
-          <span className="text-2xl font-medium text-[#1F4E79]">Adult Session</span>
+          <span className="text-2xl font-medium text-[#1F4E79]">
+            Adult Session
+          </span>
         </Link>
 
         <Link
@@ -37,7 +39,9 @@ export default function HomePage() {
           <span className="text-5xl" aria-hidden>
             🧒
           </span>
-          <span className="text-2xl font-medium text-[#1F4E79]">Children&apos;s Session</span>
+          <span className="text-2xl font-medium text-[#1F4E79]">
+            Children&apos;s Session
+          </span>
         </Link>
       </div>
     </main>
