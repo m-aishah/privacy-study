@@ -6,6 +6,7 @@ import Image from "next/image";
 import { AnswerOptions } from "@/components/AnswerOptions";
 import { ConfidenceRating } from "@/components/ConfidenceRating";
 import { NextButton } from "@/components/NextButton";
+import { SmileIcon, XCircleIcon, QuestionMarkIcon } from "@/components/icons";
 import { useAudio } from "@/hooks/useAudio";
 import { audioClip, content } from "@/lib/content";
 import { logSeeYourselfResponse, Mode, SeeYourselfAnswer } from "@/lib/supabase";
@@ -87,9 +88,9 @@ export default function SeeYourselfPage({ params }: { params: { mode: Mode } }) 
         onSelect={setAnswer}
         compact
         options={[
-          { value: "yes", label: copy.seeYourselfYes },
-          { value: "no", label: copy.seeYourselfNo },
-          { value: "not_sure", label: copy.seeYourselfNotSure },
+          { value: "yes", label: copy.seeYourselfYes, icon: <SmileIcon className="w-6 h-6" /> },
+          { value: "no", label: copy.seeYourselfNo, icon: <XCircleIcon className="w-6 h-6" /> },
+          { value: "not_sure", label: copy.seeYourselfNotSure, icon: <QuestionMarkIcon className="w-6 h-6" /> },
         ]}
       />
 

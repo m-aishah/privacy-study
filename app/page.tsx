@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
+import { UsersIcon, ChildIcon } from "@/components/icons";
 import { STUDY_TITLE } from "@/lib/content";
 
 export default function HomePage() {
@@ -24,9 +25,7 @@ export default function HomePage() {
           href="/session/adult/welcome"
           className="flex flex-col items-center gap-4 border-2 border-[#00573F] rounded-lg px-8 py-10 hover:bg-gray-50 transition-colors"
         >
-          <span className="text-5xl" aria-hidden>
-            🧑‍🤝‍🧑
-          </span>
+          <UsersIcon className="w-14 h-14 text-[#00573F]" />
           <span className="text-2xl font-medium text-[#1F4E79]">
             Adult Session
           </span>
@@ -36,9 +35,7 @@ export default function HomePage() {
           href="/session/children/welcome"
           className="flex flex-col items-center gap-4 border-2 border-[#00573F] rounded-lg px-8 py-10 hover:bg-gray-50 transition-colors"
         >
-          <span className="text-5xl" aria-hidden>
-            🧒
-          </span>
+          <ChildIcon className="w-14 h-14 text-[#00573F]" />
           <span className="text-2xl font-medium text-[#1F4E79]">
             Children&apos;s Session
           </span>

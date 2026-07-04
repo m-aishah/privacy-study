@@ -1,6 +1,7 @@
 "use client";
 
 import { Logo } from "@/components/Logo";
+import { AlertTriangleIcon } from "@/components/icons";
 import { content } from "@/lib/content";
 import { Mode } from "@/lib/supabase";
 
@@ -11,9 +12,7 @@ export function ErrorScreen({ mode, onRetry }: { mode: Mode | null; onRetry: () 
   if (isChildren) {
     return (
       <main className="min-h-screen flex flex-col items-center justify-center px-6 py-12 gap-6 text-center bg-kids-bg font-kids">
-        <span className="text-7xl" aria-hidden>
-          😵‍💫
-        </span>
+        <AlertTriangleIcon className="w-20 h-20 text-kids-coral" />
         <h1 className="text-4xl font-extrabold text-kids-coral">{copy.errorTitle}</h1>
         <p className="text-2xl text-[#1A1A1A] max-w-xl">{copy.errorBody}</p>
         <button
