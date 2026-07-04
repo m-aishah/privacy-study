@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAudio } from "@/hooks/useAudio";
+import { CheckIcon } from "@/components/icons";
 import { audioClip, content } from "@/lib/content";
 import { Mode } from "@/lib/supabase";
 import { useSession } from "@/context/SessionContext";
@@ -67,11 +68,12 @@ export default function QuestionnairePage({ params }: { params: { mode: Mode } }
           onClick={() => router.push(`/session/${mode}/goodbye`)}
           className={
             isAdult
-              ? "font-adult text-xl px-10 py-4 bg-adult-green text-white rounded-none hover:opacity-90 transition-opacity shadow-lg"
-              : "font-kids text-xl px-10 py-5 bg-kids-coral text-white rounded-full shadow-lg hover:scale-105 transition-transform"
+              ? "font-adult text-xl px-10 py-4 bg-adult-green text-white rounded-none hover:opacity-90 transition-opacity shadow-lg inline-flex items-center gap-2"
+              : "font-kids text-xl px-10 py-5 bg-kids-coral text-white rounded-full shadow-lg hover:scale-105 transition-transform inline-flex items-center gap-2"
           }
         >
           {copy.questionnaireDone}
+          <CheckIcon className={isAdult ? "w-5 h-5" : "w-6 h-6"} />
         </button>
       </div>
     </main>

@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import { Mode } from "@/lib/supabase";
 
 export function AnswerOptions<T extends string>({
@@ -8,7 +9,7 @@ export function AnswerOptions<T extends string>({
   compact = false,
 }: {
   mode: Mode;
-  options: { value: T; label: string }[];
+  options: { value: T; label: string; icon?: ReactNode }[];
   selected: T | null;
   onSelect: (value: T) => void;
   compact?: boolean;
@@ -41,7 +42,7 @@ export function AnswerOptions<T extends string>({
         <button
           key={opt.value}
           onClick={() => onSelect(opt.value)}
-          className={`font-kids text-xl rounded-3xl border-4 transition-all ${
+          className={`font-kids text-xl rounded-3xl border-4 transition-all inline-flex items-center justify-center gap-2 ${
             compact ? "px-6 py-2.5" : "px-6 py-8"
           } ${
             selected === opt.value
@@ -50,6 +51,7 @@ export function AnswerOptions<T extends string>({
           }`}
         >
           {opt.label}
+          {opt.icon}
         </button>
       ))}
     </div>
