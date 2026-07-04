@@ -40,7 +40,9 @@ export default function AdminPage() {
     return (
       <main className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
         <div className="w-full max-w-sm bg-white border border-gray-300 rounded p-8">
-          <h1 className="text-2xl font-semibold text-gray-800 mb-4">Admin Login</h1>
+          <h1 className="text-2xl font-semibold text-gray-800 mb-4">
+            Admin Login
+          </h1>
           <input
             type="password"
             value={password}
@@ -70,8 +72,12 @@ function AdminDashboard() {
   const [sessions, setSessions] = useState<SessionRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<string | null>(null);
-  const [slideshowByExpanded, setSlideshowByExpanded] = useState<SlideshowResponseRow[]>([]);
-  const [seeYourselfByExpanded, setSeeYourselfByExpanded] = useState<SeeYourselfResponseRow[]>([]);
+  const [slideshowByExpanded, setSlideshowByExpanded] = useState<
+    SlideshowResponseRow[]
+  >([]);
+  const [seeYourselfByExpanded, setSeeYourselfByExpanded] = useState<
+    SeeYourselfResponseRow[]
+  >([]);
   const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
@@ -98,24 +104,34 @@ function AdminDashboard() {
         .select("*")
         .eq("session_id", sessionId)
         .order("pair_number", { ascending: true }),
-      supabase.from("see_yourself_responses").select("*").eq("session_id", sessionId),
+      supabase
+        .from("see_yourself_responses")
+        .select("*")
+        .eq("session_id", sessionId),
     ]);
 
     setSlideshowByExpanded((slideshowRes.data as SlideshowResponseRow[]) ?? []);
-    setSeeYourselfByExpanded((seeYourselfRes.data as SeeYourselfResponseRow[]) ?? []);
+    setSeeYourselfByExpanded(
+      (seeYourselfRes.data as SeeYourselfResponseRow[]) ?? [],
+    );
   };
 
   const exportCsv = async () => {
     setExporting(true);
     try {
-      const [{ data: allSessions }, { data: allSlideshow }, { data: allSeeYourself }] =
-        await Promise.all([
-          supabase.from("sessions").select("*"),
-          supabase.from("slideshow_responses").select("*"),
-          supabase.from("see_yourself_responses").select("*"),
-        ]);
+      const [
+        { data: allSessions },
+        { data: allSlideshow },
+        { data: allSeeYourself },
+      ] = await Promise.all([
+        supabase.from("sessions").select("*"),
+        supabase.from("slideshow_responses").select("*"),
+        supabase.from("see_yourself_responses").select("*"),
+      ]);
 
-      const sessionsById = new Map((allSessions as SessionRow[] | null)?.map((s) => [s.id, s]));
+      const sessionsById = new Map(
+        (allSessions as SessionRow[] | null)?.map((s) => [s.id, s]),
+      );
 
       const rows: string[][] = [
         [
@@ -162,7 +178,9 @@ function AdminDashboard() {
       });
 
       const csv = rows
-        .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(","))
+        .map((row) =>
+          row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(","),
+        )
         .join("\n");
 
       const blob = new Blob([csv], { type: "text/csv" });
@@ -181,7 +199,7 @@ function AdminDashboard() {
     <main className="min-h-screen bg-gray-50 px-4 py-8">
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-semibold text-gray-800">PrivacyStudy Admin</h1>
+          <h1 className="text-2xl font-semibold text-gray-800">Admin</h1>
           <button
             onClick={exportCsv}
             disabled={exporting}
@@ -217,7 +235,10 @@ function AdminDashboard() {
                 ))}
                 {sessions.length === 0 && (
                   <tr>
-                    <td colSpan={4} className="px-4 py-6 text-center text-gray-500">
+                    <td
+                      colSpan={4}
+                      className="px-4 py-6 text-center text-gray-500"
+                    >
                       No sessions yet.
                     </td>
                   </tr>
@@ -249,7 +270,9 @@ function SessionRowView({
       <tr className="border-t border-gray-200">
         <td className="px-4 py-2">{session.participant_id}</td>
         <td className="px-4 py-2 capitalize">{session.mode}</td>
-        <td className="px-4 py-2">{new Date(session.created_at).toLocaleString()}</td>
+        <td className="px-4 py-2">
+          {new Date(session.created_at).toLocaleString()}
+        </td>
         <td className="px-4 py-2">
           <button onClick={onToggle} className="text-blue-700 underline">
             {expanded ? "Hide" : "View"}
@@ -259,7 +282,9 @@ function SessionRowView({
       {expanded && (
         <tr className="bg-gray-50 border-t border-gray-200">
           <td colSpan={4} className="px-4 py-4">
-            <h3 className="font-semibold text-gray-700 mb-2">Slideshow Responses</h3>
+            <h3 className="font-semibold text-gray-700 mb-2">
+              Slideshow Responses
+            </h3>
             <table className="w-full text-xs mb-4">
               <thead>
                 <tr className="text-gray-600">
@@ -286,7 +311,9 @@ function SessionRowView({
               </tbody>
             </table>
 
-            <h3 className="font-semibold text-gray-700 mb-2">See Yourself Response</h3>
+            <h3 className="font-semibold text-gray-700 mb-2">
+              See Yourself Response
+            </h3>
             <table className="w-full text-xs">
               <thead>
                 <tr className="text-gray-600">
