@@ -14,7 +14,11 @@ import {
   STAND_UP_AFTER_ACTION,
   TOTAL_ACTIONS,
 } from "@/lib/content";
-import { Mode, triggerPipelineStart, triggerPipelineStop } from "@/lib/supabase";
+import {
+  Mode,
+  triggerPipelineStart,
+  triggerPipelineStop,
+} from "@/lib/supabase";
 
 type Phase = "action" | "standup";
 
@@ -36,16 +40,24 @@ export default function GamePage({ params }: { params: { mode: Mode } }) {
   // separate useAudio calls firing at the same time would still overlap
   // each other).
   const actionClips = introQueuedRef.current
-    ? [audioClip(mode, `action_${actionNumber}_cue`)]
-    : [audioClip(mode, "game_intro"), audioClip(mode, `action_${actionNumber}_cue`)];
+    ? [audioClip(mode, `action_${actionNumber}`)]
+    : [
+        audioClip(mode, "game_intro"),
+        audioClip(mode, `action_${actionNumber}`),
+      ];
 
-  const { play: playActionCue } = useAudio(actionClips, () => setActionAudioDone(true));
-  const { play: playStandUp } = useAudio([audioClip(mode, "stand_up")], () =>
-    setStandUpAudioDone(true)
+  const { play: playActionCue } = useAudio(actionClips, () =>
+    setActionAudioDone(true),
   );
-  const { play: playComplete } = useAudio([audioClip(mode, "game_complete")], () => {
-    router.push(`/session/${mode}/seeyourself`);
-  });
+  const { play: playStandUp } = useAudio([audioClip(mode, "stand_up")], () =>
+    setStandUpAudioDone(true),
+  );
+  const { play: playComplete } = useAudio(
+    [audioClip(mode, "game_complete")],
+    () => {
+      router.push(`/session/${mode}/seeyourself`);
+    },
+  );
 
   useEffect(() => {
     triggerPipelineStart();
@@ -111,12 +123,22 @@ export default function GamePage({ params }: { params: { mode: Mode } }) {
         >
           {copy.standUpHeading}
         </h1>
-        <p className={isAdult ? "text-xl text-adult-text max-w-xl" : "text-2xl text-[#1A1A1A] max-w-xl"}>
+        <p
+          className={
+            isAdult
+              ? "text-xl text-adult-text max-w-xl"
+              : "text-2xl text-[#1A1A1A] max-w-xl"
+          }
+        >
           {copy.standUpBody}
         </p>
         <div className="min-h-[3.5rem]">
           {standUpAudioDone && (
-            <NextButton mode={mode} label={copy.standUpReady} onClick={handleReady} />
+            <NextButton
+              mode={mode}
+              label={copy.standUpReady}
+              onClick={handleReady}
+            />
           )}
         </div>
       </main>
@@ -125,7 +147,11 @@ export default function GamePage({ params }: { params: { mode: Mode } }) {
 
   return (
     <main className="min-h-screen flex flex-col items-center pb-10">
-      <ProgressIndicator mode={mode} current={actionNumber} total={TOTAL_ACTIONS} />
+      <ProgressIndicator
+        mode={mode}
+        current={actionNumber}
+        total={TOTAL_ACTIONS}
+      />
 
       <div className="w-full max-w-7xl px-4 mt-6 flex-1 grid grid-cols-1 sm:grid-cols-[3fr_1fr] gap-6 items-center">
         <div
@@ -153,7 +179,11 @@ export default function GamePage({ params }: { params: { mode: Mode } }) {
               <NextButton mode={mode} label={copy.next} onClick={handleNext} />
             )}
           </div>
-          <ReplayButton mode={mode} label={copy.replay} onClick={handleReplay} />
+          <ReplayButton
+            mode={mode}
+            label={copy.replay}
+            onClick={handleReplay}
+          />
         </div>
       </div>
     </main>
