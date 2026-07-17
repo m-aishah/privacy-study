@@ -39,6 +39,14 @@ export type SeeYourselfResponseRow = {
   created_at: string;
 };
 
+export type OpenEndedResponseRow = {
+  id: string;
+  session_id: string;
+  question_number: number;
+  response: string | null;
+  created_at: string;
+};
+
 export type CreateSessionResult =
   | { status: "ok"; sessionId: string }
   | { status: "duplicate" }
@@ -106,6 +114,23 @@ export async function logSeeYourselfResponse(
     if (error) console.error("logSeeYourselfResponse error:", error);
   } catch (err) {
     console.error("logSeeYourselfResponse threw:", err);
+  }
+}
+
+export async function logOpenEndedResponse(
+  sessionId: string,
+  questionNumber: number,
+  response: string | null
+): Promise<void> {
+  try {
+    const { error } = await supabase.from("open_ended_responses").insert({
+      session_id: sessionId,
+      question_number: questionNumber,
+      response,
+    });
+    if (error) console.error("logOpenEndedResponse error:", error);
+  } catch (err) {
+    console.error("logOpenEndedResponse threw:", err);
   }
 }
 

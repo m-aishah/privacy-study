@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { ProgressIndicator } from "@/components/ProgressIndicator";
 import { AnswerOptions } from "@/components/AnswerOptions";
 import { ConfidenceRating } from "@/components/ConfidenceRating";
 import { NextButton } from "@/components/NextButton";
+import { FallbackImage } from "@/components/FallbackImage";
 import { useAudio } from "@/hooks/useAudio";
 import { audioClip, content, slideshowPairSrc, TOTAL_PAIRS } from "@/lib/content";
 import { logSlideshowResponse, Mode, SlideshowAnswer } from "@/lib/supabase";
@@ -65,12 +65,12 @@ export default function SlideshowPage({ params }: { params: { mode: Mode } }) {
     <main className="h-screen flex flex-col items-center justify-center overflow-y-auto py-2">
       <ProgressIndicator mode={mode} current={pairNumber} total={TOTAL_PAIRS} compact />
 
-      <div className="w-full max-w-3xl px-4 mt-1 text-center">
+      <div className="w-full max-w-3xl px-4 mt-2 text-center">
         <h1
           className={
             isAdult
-              ? "text-2xl sm:text-3xl font-semibold text-adult-navy mb-2"
-              : "text-2xl sm:text-3xl font-extrabold text-kids-coral mb-2"
+              ? "text-2xl sm:text-3xl font-semibold text-adult-navy mb-4"
+              : "text-2xl sm:text-3xl font-extrabold text-kids-coral mb-4"
           }
         >
           {copy.slideshowIntroHeading}
@@ -84,7 +84,11 @@ export default function SlideshowPage({ params }: { params: { mode: Mode } }) {
                 : "relative w-[min(42vw,40vh)] h-[min(42vw,40vh)] rounded-3xl overflow-hidden border-4 border-kids-teal"
             }
           >
-            <Image src={images.a} alt={`Pair ${pairNumber} - image A`} fill className="object-cover" />
+            <FallbackImage
+              basePath={images.a}
+              alt={`Pair ${pairNumber} - image A`}
+              className="w-full h-full object-cover"
+            />
           </div>
           <div
             className={
@@ -93,11 +97,15 @@ export default function SlideshowPage({ params }: { params: { mode: Mode } }) {
                 : "relative w-[min(42vw,40vh)] h-[min(42vw,40vh)] rounded-3xl overflow-hidden border-4 border-kids-teal"
             }
           >
-            <Image src={images.b} alt={`Pair ${pairNumber} - image B`} fill className="object-cover" />
+            <FallbackImage
+              basePath={images.b}
+              alt={`Pair ${pairNumber} - image B`}
+              className="w-full h-full object-cover"
+            />
           </div>
         </div>
 
-        <p className={isAdult ? "text-lg sm:text-xl text-adult-text mt-2" : "text-xl sm:text-2xl text-[#1A1A1A] mt-2"}>
+        <p className={isAdult ? "text-lg sm:text-xl text-adult-text mt-5" : "text-xl sm:text-2xl text-[#1A1A1A] mt-5"}>
           {copy.slideshowQuestion}
         </p>
       </div>
@@ -116,17 +124,19 @@ export default function SlideshowPage({ params }: { params: { mode: Mode } }) {
             ]}
           />
 
-          <ConfidenceRating
-            mode={mode}
-            label={copy.confidenceLabel}
-            value={confidence}
-            onChange={setConfidence}
-            compact
-          />
+          <div className="mt-4 w-full">
+            <ConfidenceRating
+              mode={mode}
+              label={copy.confidenceLabel}
+              value={confidence}
+              onChange={setConfidence}
+              compact
+            />
+          </div>
         </>
       )}
 
-      <div className="mt-4 mb-4 min-h-[3.5rem]">
+      <div className="mt-5 mb-4 min-h-[3.5rem]">
         {answer && confidence !== null && (
           <NextButton mode={mode} label={copy.next} onClick={handleNext} />
         )}

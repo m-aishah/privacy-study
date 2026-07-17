@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Logo } from "@/components/Logo";
+import { CornerLogo } from "@/components/CornerLogo";
 import { useAudio } from "@/hooks/useAudio";
 import { audioClip, content } from "@/lib/content";
 import { createSession, Mode } from "@/lib/supabase";
@@ -51,10 +51,10 @@ export default function WelcomePage({ params }: { params: { mode: Mode } }) {
   const isAdult = mode === "adult";
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center px-6 py-12 gap-8">
-      <Logo size={isAdult ? 72 : 56} />
+    <main className="min-h-screen flex flex-col px-6 py-10">
+      <CornerLogo size={isAdult ? 40 : 32} />
 
-      <div className="text-center max-w-xl">
+      <div className="text-center max-w-xl mx-auto pt-6 sm:pt-10">
         <h1
           className={
             isAdult
@@ -75,7 +75,7 @@ export default function WelcomePage({ params }: { params: { mode: Mode } }) {
         </p>
       </div>
 
-      <div className="w-full max-w-sm flex flex-col items-center gap-6">
+      <div className="flex-1 flex flex-col items-center justify-center w-full max-w-sm mx-auto gap-6">
         <label className="w-full text-center">
           <span
             className={

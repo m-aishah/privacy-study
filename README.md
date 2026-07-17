@@ -14,7 +14,10 @@ Tailwind CSS, and Supabase, deployed on Vercel.
 3. Paste the contents of [`sql/schema.sql`](./sql/schema.sql) and run it. It creates:
    - `sessions` (id, participant_id, mode, created_at)
    - `slideshow_responses` (id, session_id, pair_number, answer, confidence, created_at)
-   - `see_yourself_responses` (id, session_id, answer, confidence, created_at)
+   - `see_yourself_responses` (id, session_id, answer, confidence, created_at) — kept
+     for historical data; the see-yourself screen itself is currently disabled
+   - `open_ended_responses` (id, session_id, question_number, response, created_at) —
+     Screen 6, the open-ended reflection questions after the questionnaire
    - Row Level Security policies that allow the app's anon key to insert and
      read rows (the `/admin` dashboard also reads through the anon key, gated
      by the separate `ADMIN_PASSWORD` app-level check).
@@ -54,16 +57,25 @@ public/
   images/
     unbc_logo.svg                     (already present)
     unbc_favicon_small_logo.jpeg      (already present)
-    see_yourself_placeholder.jpg
+    see_yourself_placeholder.jpg      (unused while that screen is disabled)
+    demo.png                          (Screen 6 — original, unmodified demo clip)
+    demo_anonymized.png               (Screen 6 — same clip with the face anonymized)
   video/
     adult/action_1_adult.mp4 ... action_15_adult.mp4
-    children/action_1_child.mp4 ... action_15_child.mp4
+    children/                         (not currently used — see note below)
   slideshow/
     pair_1a.jpg, pair_1b.jpg ... pair_15a.jpg, pair_15b.jpg
+    (any pair image may be .jpg, .jpeg, or .png — the app tries each
+    extension in turn, so it doesn't matter which one you use)
   audio/
     adult/    (see clip list below)
     children/ (same file names, mirrored content)
 ```
+
+**Video note:** both Adult and Children modes currently play from
+`public/video/adult/` (the `children/` folder isn't read yet) until
+dedicated children's action videos are recorded — see
+`actionVideoSrc()` in `lib/content.ts`.
 
 ### Audio clip names (per mode, in `public/audio/<mode>/`)
 
@@ -78,9 +90,11 @@ public/
 | `action_1_cue.mp3` ... `action_15_cue.mp3` | Before each of the 15 actions |
 | `stand_up.mp3` | On the stand-up break screen (after action 12) |
 | `game_complete.mp3` | After the 15th action |
-| `see_yourself_intro.mp3` | On load of the see-yourself page |
-| `see_yourself_complete.mp3` | After the recognisability question is answered |
+| ~~`see_yourself_intro.mp3`~~ | Not currently played — the see-yourself screen is disabled (code kept, commented out, for reinstatement) |
+| ~~`see_yourself_complete.mp3`~~ | Same as above |
 | `questionnaire_intro.mp3` | On load of the questionnaire page |
+| `screen6_intro_adult.mp3` | On load of Screen 6 (open-ended questions), adult mode only |
+| `screen6_intro_child.mp3` | On load of Screen 6 (open-ended questions), children mode only |
 | `goodbye.mp3` | On the final goodbye screen |
 
 A missing or failed-to-load clip is skipped silently — it will never block
@@ -111,10 +125,16 @@ Visit `http://localhost:3000` — this is the coordinator's mode-select page.
 3. The participant is guided, screen by screen, through: welcome ->
    slideshow (15 image-pair comparisons) -> game (15 actions, with a
    stand-up break after action 12, and a silent trigger to the
-   anonymization pipeline via ngrok) -> see-yourself question ->
-   SurveyMonkey questionnaire -> goodbye.
-4. There is no back navigation anywhere past the welcome screen, and
-   refreshing prompts a native "leave site?" warning.
+   anonymization pipeline via ngrok) -> SurveyMonkey questionnaire ->
+   Screen 6 (open-ended reflection questions — 5 for adults, 1 for
+   children) -> goodbye. (The see-yourself screen is currently disabled;
+   its code is kept, commented out, in case it's reinstated.)
+4. There is no back navigation anywhere past the welcome screen — a
+   themed in-app modal intercepts the back button and keyboard reload
+   shortcuts (F5, Ctrl/Cmd+R), offering to restart the session instead.
+   Clicking the browser's own reload button or closing the tab still
+   falls back to the native, unstylable "leave site?" browser dialog,
+   since no website's JS can intercept those specific actions.
 5. All responses are logged to Supabase; failures are silent and never
    interrupt the session.
 6. Sydney or another researcher can review and export session data from

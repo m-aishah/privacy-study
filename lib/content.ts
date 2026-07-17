@@ -39,6 +39,20 @@ export const content = {
     questionnaireHeading: "Final Questionnaire",
     questionnaireBody: "Please complete the short questionnaire below.",
     questionnaireDone: "I have completed the questionnaire",
+    openEndedIntro:
+      "Before we finish, we would love to hear your thoughts. There are no right or wrong answers — just tell us what you genuinely think.",
+    openEndedCaption:
+      "This is an example of what our privacy system does to a video recording — the original face has been replaced while keeping the person's movements and expressions intact.",
+    openEndedPlaceholder: "Type your thoughts here...",
+    openEndedNext: "Next",
+    openEndedSkip: "Skip",
+    openEndedQuestions: [
+      "When you imagine a system that can record you but shows a different face instead of yours, how does that make you feel?",
+      "Do you think a tool like this could be useful in any situations or contexts? If yes, where?",
+      "What concerns, if any, do you have about a system that replaces faces in video recordings?",
+      "Now that you have seen what the system does — do you feel it adequately protects a person's identity? Why or why not?",
+      "Would you feel comfortable participating in a research study where your face was replaced using this kind of system? What would make you more or less comfortable?",
+    ],
     goodbyeHeading: "Thank You",
     goodbyeBody:
       "Thank you for participating in this study. Your contribution helps advance privacy-preserving technology. You may now let the session coordinator know you are finished.",
@@ -88,6 +102,17 @@ export const content = {
     questionnaireBody:
       "Please answer a few more fun questions below with a grown-up if you need help.",
     questionnaireDone: "All Done With Questions!",
+    openEndedCaption:
+      "Look at this! Our special computer changed what this person's face looks like in the video — but you can still see everything they are doing!",
+    openEndedQuestion:
+      "How does it make you feel seeing someone's face changed like this in a video? You can write anything you want or draw how you feel!",
+    openEndedPlaceholder: "Write anything you want here!",
+    openEndedNext: "Next",
+    openEndedEmojiOptions: [
+      { emoji: "😊", label: "Cool / I like it" },
+      { emoji: "😐", label: "Not sure" },
+      { emoji: "😟", label: "It makes me uncomfortable" },
+    ],
     goodbyeHeading: "You Did Amazing!",
     goodbyeBody:
       "Thank you so much for playing with us today! You were super helpful. You can tell the grown-up in the room that you're finished.",
@@ -113,14 +138,17 @@ export const TOTAL_PAIRS = 15;
 export const TOTAL_ACTIONS = 15;
 export const STAND_UP_AFTER_ACTION = 12;
 
-export function actionVideoSrc(mode: Mode, actionNumber: number) {
-  const suffix = mode === "adult" ? "adult" : "child";
-  return `/video/${mode}/action_${actionNumber}_${suffix}.mp4`;
+export function actionVideoSrc(_mode: Mode, actionNumber: number) {
+  // Both adult and children modes currently play from the adult video
+  // folder/naming until dedicated children's action videos are recorded.
+  return `/video/adult/action_${actionNumber}_adult.mp4`;
 }
+
+export const IMAGE_EXTENSIONS = ["jpg", "jpeg", "png"] as const;
 
 export function slideshowPairSrc(pairNumber: number) {
   return {
-    a: `/slideshow/pair_${pairNumber}a.jpg`,
-    b: `/slideshow/pair_${pairNumber}b.jpg`,
+    a: `/slideshow/pair_${pairNumber}a`,
+    b: `/slideshow/pair_${pairNumber}b`,
   };
 }

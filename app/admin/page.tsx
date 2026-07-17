@@ -2,14 +2,26 @@
 
 import { useEffect, useState } from "react";
 import {
+  OpenEndedResponseRow,
   SeeYourselfResponseRow,
   SessionRow,
   SlideshowResponseRow,
   supabase,
 } from "@/lib/supabase";
-import { TOTAL_PAIRS } from "@/lib/content";
+import { content, TOTAL_PAIRS } from "@/lib/content";
 
-type CompletionInfo = { slideshowCount: number; hasSeeYourself: boolean };
+type CompletionInfo = { slideshowCount: number; openEndedCount: number };
+
+function requiredOpenEnded(mode: string) {
+  return mode === "adult" ? 5 : 1;
+}
+
+function openEndedQuestionText(mode: string, questionNumber: number): string {
+  if (mode === "adult") {
+    return content.adult.openEndedQuestions[questionNumber - 1] ?? `Question ${questionNumber}`;
+  }
+  return content.children.openEndedQuestion;
+}
 
 export default function AdminPage() {
   const [authed, setAuthed] = useState(false);
@@ -82,27 +94,28 @@ function AdminDashboard() {
   const [seeYourselfByExpanded, setSeeYourselfByExpanded] = useState<
     SeeYourselfResponseRow[]
   >([]);
+  const [openEndedByExpanded, setOpenEndedByExpanded] = useState<OpenEndedResponseRow[]>([]);
   const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
     (async () => {
-      const [sessionsRes, slideshowRes, seeYourselfRes] = await Promise.all([
+      const [sessionsRes, slideshowRes, openEndedRes] = await Promise.all([
         supabase.from("sessions").select("*").order("created_at", { ascending: false }),
         supabase.from("slideshow_responses").select("session_id"),
-        supabase.from("see_yourself_responses").select("session_id"),
+        supabase.from("open_ended_responses").select("session_id"),
       ]);
 
       if (!sessionsRes.error && sessionsRes.data) setSessions(sessionsRes.data as SessionRow[]);
 
       const map = new Map<string, CompletionInfo>();
       (slideshowRes.data as { session_id: string }[] | null)?.forEach((r) => {
-        const entry = map.get(r.session_id) ?? { slideshowCount: 0, hasSeeYourself: false };
+        const entry = map.get(r.session_id) ?? { slideshowCount: 0, openEndedCount: 0 };
         entry.slideshowCount += 1;
         map.set(r.session_id, entry);
       });
-      (seeYourselfRes.data as { session_id: string }[] | null)?.forEach((r) => {
-        const entry = map.get(r.session_id) ?? { slideshowCount: 0, hasSeeYourself: false };
-        entry.hasSeeYourself = true;
+      (openEndedRes.data as { session_id: string }[] | null)?.forEach((r) => {
+        const entry = map.get(r.session_id) ?? { slideshowCount: 0, openEndedCount: 0 };
+        entry.openEndedCount += 1;
         map.set(r.session_id, entry);
       });
       setCompletion(map);
@@ -117,7 +130,7 @@ function AdminDashboard() {
     }
     setExpanded(sessionId);
 
-    const [slideshowRes, seeYourselfRes] = await Promise.all([
+    const [slideshowRes, seeYourselfRes, openEndedRes] = await Promise.all([
       supabase
         .from("slideshow_responses")
         .select("*")
@@ -127,12 +140,18 @@ function AdminDashboard() {
         .from("see_yourself_responses")
         .select("*")
         .eq("session_id", sessionId),
+      supabase
+        .from("open_ended_responses")
+        .select("*")
+        .eq("session_id", sessionId)
+        .order("question_number", { ascending: true }),
     ]);
 
     setSlideshowByExpanded((slideshowRes.data as SlideshowResponseRow[]) ?? []);
     setSeeYourselfByExpanded(
       (seeYourselfRes.data as SeeYourselfResponseRow[]) ?? [],
     );
+    setOpenEndedByExpanded((openEndedRes.data as OpenEndedResponseRow[]) ?? []);
   };
 
   const exportCsv = async () => {
@@ -142,10 +161,12 @@ function AdminDashboard() {
         { data: allSessions },
         { data: allSlideshow },
         { data: allSeeYourself },
+        { data: allOpenEnded },
       ] = await Promise.all([
         supabase.from("sessions").select("*"),
         supabase.from("slideshow_responses").select("*"),
         supabase.from("see_yourself_responses").select("*"),
+        supabase.from("open_ended_responses").select("*"),
       ]);
 
       const sessionsById = new Map(
@@ -192,6 +213,21 @@ function AdminDashboard() {
           "",
           r.answer,
           String(r.confidence),
+          r.created_at,
+        ]);
+      });
+
+      (allOpenEnded as OpenEndedResponseRow[] | null)?.forEach((r) => {
+        const s = sessionsById.get(r.session_id);
+        rows.push([
+          r.session_id,
+          s?.participant_id ?? "",
+          s?.mode ?? "",
+          s?.created_at ?? "",
+          "open_ended",
+          String(r.question_number),
+          r.response ?? "",
+          "",
           r.created_at,
         ]);
       });
@@ -247,11 +283,12 @@ function AdminDashboard() {
                   <SessionRowView
                     key={s.id}
                     session={s}
-                    completion={completion.get(s.id) ?? { slideshowCount: 0, hasSeeYourself: false }}
+                    completion={completion.get(s.id) ?? { slideshowCount: 0, openEndedCount: 0 }}
                     expanded={expanded === s.id}
                     onToggle={() => toggleExpand(s.id)}
                     slideshow={expanded === s.id ? slideshowByExpanded : []}
                     seeYourself={expanded === s.id ? seeYourselfByExpanded : []}
+                    openEnded={expanded === s.id ? openEndedByExpanded : []}
                   />
                 ))}
                 {sessions.length === 0 && (
@@ -273,8 +310,15 @@ function AdminDashboard() {
   );
 }
 
-function CompletionBadge({ completion }: { completion: CompletionInfo }) {
-  const isComplete = completion.slideshowCount >= TOTAL_PAIRS && completion.hasSeeYourself;
+function CompletionBadge({
+  mode,
+  completion,
+}: {
+  mode: string;
+  completion: CompletionInfo;
+}) {
+  const required = requiredOpenEnded(mode);
+  const isComplete = completion.slideshowCount >= TOTAL_PAIRS && completion.openEndedCount >= required;
 
   if (isComplete) {
     return (
@@ -286,8 +330,8 @@ function CompletionBadge({ completion }: { completion: CompletionInfo }) {
 
   return (
     <span className="inline-flex items-center gap-1 text-amber-700 bg-amber-50 border border-amber-200 rounded px-2 py-0.5 text-xs font-medium">
-      Incomplete · {completion.slideshowCount}/{TOTAL_PAIRS} slideshow
-      {completion.hasSeeYourself ? "" : ", no see-yourself"}
+      Incomplete · {completion.slideshowCount}/{TOTAL_PAIRS} slideshow ·{" "}
+      {completion.openEndedCount}/{required} reflection
     </span>
   );
 }
@@ -299,6 +343,7 @@ function SessionRowView({
   onToggle,
   slideshow,
   seeYourself,
+  openEnded,
 }: {
   session: SessionRow;
   completion: CompletionInfo;
@@ -306,6 +351,7 @@ function SessionRowView({
   onToggle: () => void;
   slideshow: SlideshowResponseRow[];
   seeYourself: SeeYourselfResponseRow[];
+  openEnded: OpenEndedResponseRow[];
 }) {
   return (
     <>
@@ -316,7 +362,7 @@ function SessionRowView({
           {new Date(session.created_at).toLocaleString()}
         </td>
         <td className="px-4 py-2">
-          <CompletionBadge completion={completion} />
+          <CompletionBadge mode={session.mode} completion={completion} />
         </td>
         <td className="px-4 py-2">
           <button onClick={onToggle} className="text-blue-700 underline">
@@ -357,31 +403,57 @@ function SessionRowView({
             </table>
 
             <h3 className="font-semibold text-gray-700 mb-2">
-              See Yourself Response
+              Open Ended Responses (Screen 6)
             </h3>
-            <table className="w-full text-xs">
+            <table className="w-full text-xs mb-4">
               <thead>
                 <tr className="text-gray-600">
-                  <th className="text-left py-1">Answer</th>
-                  <th className="text-left py-1">Confidence</th>
+                  <th className="text-left py-1 w-1/2">Question</th>
+                  <th className="text-left py-1">Response</th>
                 </tr>
               </thead>
               <tbody>
-                {seeYourself.map((r) => (
-                  <tr key={r.id}>
-                    <td className="py-1">{r.answer}</td>
-                    <td className="py-1">{r.confidence}</td>
+                {openEnded.map((r) => (
+                  <tr key={r.id} className="align-top">
+                    <td className="py-1 pr-4">
+                      {openEndedQuestionText(session.mode, r.question_number)}
+                    </td>
+                    <td className="py-1">{r.response ?? <em className="text-gray-400">Skipped</em>}</td>
                   </tr>
                 ))}
-                {seeYourself.length === 0 && (
+                {openEnded.length === 0 && (
                   <tr>
                     <td colSpan={2} className="py-1 text-gray-500">
-                      No response.
+                      No responses.
                     </td>
                   </tr>
                 )}
               </tbody>
             </table>
+
+            {seeYourself.length > 0 && (
+              <>
+                <h3 className="font-semibold text-gray-700 mb-2">
+                  See Yourself Response (legacy)
+                </h3>
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="text-gray-600">
+                      <th className="text-left py-1">Answer</th>
+                      <th className="text-left py-1">Confidence</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {seeYourself.map((r) => (
+                      <tr key={r.id}>
+                        <td className="py-1">{r.answer}</td>
+                        <td className="py-1">{r.confidence}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </>
+            )}
           </td>
         </tr>
       )}

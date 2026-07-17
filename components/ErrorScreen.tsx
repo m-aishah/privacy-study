@@ -1,6 +1,6 @@
 "use client";
 
-import { Logo } from "@/components/Logo";
+import { CornerLogo } from "@/components/CornerLogo";
 import { AlertTriangleIcon } from "@/components/icons";
 import { content } from "@/lib/content";
 import { Mode } from "@/lib/supabase";
@@ -27,7 +27,7 @@ export function ErrorScreen({ mode, onRetry }: { mode: Mode | null; onRetry: () 
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center px-6 py-12 gap-6 text-center bg-adult-bg font-adult">
-      <Logo size={64} />
+      <CornerLogo size={40} />
       <h1 className="text-4xl font-semibold text-adult-navy">{copy.errorTitle}</h1>
       <p className="text-xl text-adult-text max-w-xl">{copy.errorBody}</p>
       <button
