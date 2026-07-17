@@ -58,8 +58,9 @@ public/
     unbc_logo.svg                     (already present)
     unbc_favicon_small_logo.jpeg      (already present)
     see_yourself_placeholder.jpg      (unused while that screen is disabled)
-    demo.png                          (Screen 6 — original, unmodified demo clip)
-    demo_anonymized.png               (Screen 6 — same clip with the face anonymized)
+    demo.{jpg,jpeg,png}                (Screen 6 — original, unmodified demo clip)
+    demo_anonymized.{jpg,jpeg,png}     (Screen 6 — same clip with the face anonymized;
+                                         same jpg/jpeg/png fallback as the slideshow pairs)
   video/
     adult/action_1_adult.mp4 ... action_15_adult.mp4
     children/                         (not currently used — see note below)
