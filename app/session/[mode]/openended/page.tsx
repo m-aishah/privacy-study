@@ -28,9 +28,10 @@ export default function OpenEndedPage({ params }: { params: { mode: Mode } }) {
   const [childText, setChildText] = useState("");
   const [childEmoji, setChildEmoji] = useState<string | null>(null);
 
-  const { play: playIntro } = useAudio(
-    [audioClip(mode, isAdult ? "screen6_intro_adult" : "screen6_intro_child")],
-    () => setIntroAudioDone(true)
+  // audioClip appends the _adult/_child suffix automatically, resolving to
+  // screen6_intro_adult.mp3 / screen6_intro_child.mp3 as specified.
+  const { play: playIntro } = useAudio([audioClip(mode, "screen6_intro")], () =>
+    setIntroAudioDone(true)
   );
 
   useEffect(() => {

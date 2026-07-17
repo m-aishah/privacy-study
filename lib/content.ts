@@ -4,7 +4,7 @@ export const AUDIO_BASE = (mode: Mode) =>
   `/audio/${mode === "adult" ? "adult" : "children"}`;
 
 export const audioClip = (mode: Mode, name: string) =>
-  `${AUDIO_BASE(mode)}/${name}.mp3`;
+  `${AUDIO_BASE(mode)}/${name}_${mode === "adult" ? "adult" : "child"}.mp3`;
 
 export const STUDY_TITLE =
   "Privacy-Preserving Video Anonymization for Human-Robot Interaction Research";
@@ -147,6 +147,9 @@ export function actionVideoSrc(_mode: Mode, actionNumber: number) {
 export const IMAGE_EXTENSIONS = ["jpg", "jpeg", "png"] as const;
 
 export function slideshowPairSrc(pairNumber: number) {
+  // No extension here on purpose — FallbackImage tries each of
+  // IMAGE_EXTENSIONS in turn, since pair images may be saved as
+  // .jpg, .jpeg, or .png.
   return {
     a: `/slideshow/pair_${pairNumber}a`,
     b: `/slideshow/pair_${pairNumber}b`,

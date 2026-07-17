@@ -77,25 +77,29 @@ public/
 dedicated children's action videos are recorded — see
 `actionVideoSrc()` in `lib/content.ts`.
 
-### Audio clip names (per mode, in `public/audio/<mode>/`)
+### Audio clip names (in `public/audio/<mode>/`)
 
-| File | When it plays |
-|---|---|
-| `welcome.mp3` | On load of the welcome page |
-| `id_confirmed.mp3` | After the participant ID is submitted |
-| `slideshow_intro.mp3` | Once, before the first image pair |
-| `slideshow_pair_instruction.mp3` | Before every pair (all 15) |
-| `slideshow_complete.mp3` | After the 15th pair is answered |
-| `game_intro.mp3` | On load of the game page |
-| `action_1_cue.mp3` ... `action_15_cue.mp3` | Before each of the 15 actions |
-| `stand_up.mp3` | On the stand-up break screen (after action 12) |
-| `game_complete.mp3` | After the 15th action |
-| ~~`see_yourself_intro.mp3`~~ | Not currently played — the see-yourself screen is disabled (code kept, commented out, for reinstatement) |
-| ~~`see_yourself_complete.mp3`~~ | Same as above |
-| `questionnaire_intro.mp3` | On load of the questionnaire page |
-| `screen6_intro_adult.mp3` | On load of Screen 6 (open-ended questions), adult mode only |
-| `screen6_intro_child.mp3` | On load of Screen 6 (open-ended questions), children mode only |
-| `goodbye.mp3` | On the final goodbye screen |
+`audioClip(mode, name)` automatically appends `_adult` or `_child` to
+whatever base name you pass, so the table below lists the base name —
+the actual file is `<base>_adult.mp3` in `public/audio/adult/` and
+`<base>_child.mp3` in `public/audio/children/`.
+
+| Base name | Actual filenames | When it plays |
+|---|---|---|
+| `welcome` | `welcome_adult.mp3` / `welcome_child.mp3` | On load of the welcome page |
+| `id_confirmed` | `id_confirmed_adult.mp3` / `id_confirmed_child.mp3` | After the participant ID is submitted |
+| `slideshow_intro` | `slideshow_intro_adult.mp3` / `slideshow_intro_child.mp3` | Once, before the first image pair |
+| `slideshow_pair_instruction` | `slideshow_pair_instruction_adult.mp3` / `_child.mp3` | Before every pair (all 15) |
+| `slideshow_complete` | `slideshow_complete_adult.mp3` / `_child.mp3` | After the 15th pair is answered |
+| `game_intro` | `game_intro_adult.mp3` / `_child.mp3` | On load of the game page |
+| `action_1` ... `action_15` | `action_1_adult.mp3` ... `action_15_adult.mp3` (and `_child` equivalents) | Before each of the 15 actions |
+| `stand_up` | `stand_up_adult.mp3` / `_child.mp3` | On the stand-up break screen (after action 12) |
+| `game_complete` | `game_complete_adult.mp3` / `_child.mp3` | After the 15th action |
+| ~~`see_yourself_intro`~~ | ~~`see_yourself_intro_adult.mp3` / `_child.mp3`~~ | Not currently played — the see-yourself screen is disabled (code kept, commented out, for reinstatement) |
+| ~~`see_yourself_complete`~~ | ~~`see_yourself_complete_adult.mp3` / `_child.mp3`~~ | Same as above |
+| `questionnaire_intro` | `questionnaire_intro_adult.mp3` / `_child.mp3` | On load of the questionnaire page |
+| `screen6_intro` | `screen6_intro_adult.mp3` / `screen6_intro_child.mp3` | On load of Screen 6 (open-ended questions) |
+| `goodbye` | `goodbye_adult.mp3` / `_child.mp3` | On the final goodbye screen |
 
 A missing or failed-to-load clip is skipped silently — it will never block
 the session.
