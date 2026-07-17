@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IMAGE_EXTENSIONS } from "@/lib/content";
 
 /**
@@ -19,6 +19,14 @@ export function FallbackImage({
 }) {
   const [extIndex, setExtIndex] = useState(0);
 
+  // Reset back to the first extension whenever basePath changes (e.g. moving
+  // to the next slideshow pair) — otherwise this component instance carries
+  // over whatever index worked for the *previous* image, and a new image
+  // that needs an earlier extension in the list never gets a chance to try it.
+  useEffect(() => {
+    setExtIndex(0);
+  }, [basePath]);
+
   if (extIndex >= IMAGE_EXTENSIONS.length) {
     return <div className={className} aria-label={alt} />;
   }
@@ -26,6 +34,7 @@ export function FallbackImage({
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
+      key={basePath}
       src={`${basePath}.${IMAGE_EXTENSIONS[extIndex]}`}
       alt={alt}
       className={className}
