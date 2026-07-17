@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
+import { FallbackImage } from "@/components/FallbackImage";
 import { NextButton } from "@/components/NextButton";
 import { useAudio } from "@/hooks/useAudio";
 import { audioClip, content } from "@/lib/content";
@@ -86,7 +86,11 @@ export default function OpenEndedPage({ params }: { params: { mode: Mode } }) {
             : "relative w-36 h-36 sm:w-44 sm:h-44 rounded-2xl overflow-hidden border-4 border-kids-teal"
         }
       >
-        <Image src="/images/demo.png" alt="Original video, unmodified" fill className="object-cover" />
+        <FallbackImage
+          basePath="/images/demo"
+          alt="Original video, unmodified"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
       </div>
       <div
         className={
@@ -95,11 +99,10 @@ export default function OpenEndedPage({ params }: { params: { mode: Mode } }) {
             : "relative w-36 h-36 sm:w-44 sm:h-44 rounded-2xl overflow-hidden border-4 border-kids-teal"
         }
       >
-        <Image
-          src="/images/demo_anonymized.png"
+        <FallbackImage
+          basePath="/images/demo_anonymized"
           alt="Same video with the face anonymized"
-          fill
-          className="object-cover"
+          className="absolute inset-0 w-full h-full object-cover"
         />
       </div>
     </div>

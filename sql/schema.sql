@@ -13,7 +13,7 @@ create table if not exists sessions (
 create table if not exists slideshow_responses (
   id uuid primary key default gen_random_uuid(),
   session_id uuid not null references sessions (id) on delete cascade,
-  pair_number integer not null check (pair_number between 1 and 15),
+  pair_number integer not null check (pair_number between 1 and 16),
   answer text not null check (answer in ('same', 'not_same', 'not_sure')),
   confidence integer not null check (confidence between 1 and 5),
   created_at timestamptz not null default now()
