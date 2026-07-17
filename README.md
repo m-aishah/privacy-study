@@ -42,7 +42,7 @@ Environment Variables** for deployment.
 |---|---|
 | `NEXT_PUBLIC_SUPABASE_URL` | Supabase dashboard -> your project -> **Settings -> API** -> "Project URL" |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Same page -> "Project API keys" -> `anon` `public` key (not the `service_role` key) |
-| `NEXT_PUBLIC_SURVEYMONKEY_URL_ADULT` | In SurveyMonkey, open the adult questionnaire -> **Collect Responses -> Web Link** -> copy the share URL |
+| `NEXT_PUBLIC_SURVEYMONKEY_URL_ADULT` | The adult questionnaire's shareable web link. Despite the variable name (kept for backwards compatibility with existing Vercel config), this works with any survey tool — e.g. a SurveyMonkey "Collect Responses -> Web Link" URL, or a TeamDynamix survey URL like `https://unbc.teamdynamix.com/TDClient/87/Portal/Surveys/TakeSurvey/<id>?responseId=<id>`. The app appends `&participant_id=<id>` to whatever URL you provide and opens it in a new tab (see note below). |
 | `NEXT_PUBLIC_SURVEYMONKEY_URL_CHILDREN` | Same, but for the children's questionnaire |
 | `NEXT_PUBLIC_NGROK_URL` | Start ngrok on the pipeline computer (`ngrok http <port>`) and copy the `https://xxxx.ngrok-free.app` forwarding URL it prints. The app POSTs to `${NEXT_PUBLIC_NGROK_URL}/start` when the game activity begins — this URL changes every time ngrok restarts unless you're on a paid plan with a reserved domain, so update it before each session if needed. |
 | `ADMIN_PASSWORD` | Any password you choose — used only to gate `/admin`. Do **not** prefix it with `NEXT_PUBLIC_` since it must stay server-side only. |
@@ -64,7 +64,7 @@ public/
     adult/action_1_adult.mp4 ... action_15_adult.mp4
     children/                         (not currently used — see note below)
   slideshow/
-    pair_1a.jpg, pair_1b.jpg ... pair_15a.jpg, pair_15b.jpg
+    pair_1a.jpg, pair_1b.jpg ... pair_16a.jpg, pair_16b.jpg
     (any pair image may be .jpg, .jpeg, or .png — the app tries each
     extension in turn, so it doesn't matter which one you use)
   audio/
@@ -89,8 +89,8 @@ the actual file is `<base>_adult.mp3` in `public/audio/adult/` and
 | `welcome` | `welcome_adult.mp3` / `welcome_child.mp3` | On load of the welcome page |
 | `id_confirmed` | `id_confirmed_adult.mp3` / `id_confirmed_child.mp3` | After the participant ID is submitted |
 | `slideshow_intro` | `slideshow_intro_adult.mp3` / `slideshow_intro_child.mp3` | Once, before the first image pair |
-| `slideshow_pair_instruction` | `slideshow_pair_instruction_adult.mp3` / `_child.mp3` | Before every pair (all 15) |
-| `slideshow_complete` | `slideshow_complete_adult.mp3` / `_child.mp3` | After the 15th pair is answered |
+| `slideshow_pair_instruction` | `slideshow_pair_instruction_adult.mp3` / `_child.mp3` | Before every pair (all 16) |
+| `slideshow_complete` | `slideshow_complete_adult.mp3` / `_child.mp3` | After the 16th pair is answered |
 | `game_intro` | `game_intro_adult.mp3` / `_child.mp3` | On load of the game page |
 | `action_1` ... `action_15` | `action_1_adult.mp3` ... `action_15_adult.mp3` (and `_child` equivalents) | Before each of the 15 actions |
 | `stand_up` | `stand_up_adult.mp3` / `_child.mp3` | On the stand-up break screen (after action 12) |
@@ -127,12 +127,19 @@ Visit `http://localhost:3000` — this is the coordinator's mode-select page.
 2. She enters the participant ID on the welcome screen, then hands the
    laptop to the participant.
 3. The participant is guided, screen by screen, through: welcome ->
-   slideshow (15 image-pair comparisons) -> game (15 actions, with a
+   slideshow (16 image-pair comparisons) -> game (15 actions, with a
    stand-up break after action 12, and a silent trigger to the
-   anonymization pipeline via ngrok) -> SurveyMonkey questionnaire ->
-   Screen 6 (open-ended reflection questions — 5 for adults, 1 for
-   children) -> goodbye. (The see-yourself screen is currently disabled;
-   its code is kept, commented out, in case it's reinstated.)
+   anonymization pipeline via ngrok) -> questionnaire -> Screen 6
+   (open-ended reflection questions — 5 for adults, 1 for children) ->
+   goodbye. (The see-yourself screen is currently disabled; its code is
+   kept, commented out, in case it's reinstated.)
+
+   The questionnaire screen doesn't embed the survey in an iframe — many
+   survey tools (including TeamDynamix) block being framed by another
+   site. Instead it shows an "Open Questionnaire" button that opens the
+   survey in a new browser tab (with `participant_id` appended to the
+   URL); the participant completes it there, then returns to the original
+   tab and taps "I have completed the questionnaire" to continue.
 4. There is no back navigation anywhere past the welcome screen — a
    themed in-app modal intercepts the back button and keyboard reload
    shortcuts (F5, Ctrl/Cmd+R), offering to restart the session instead.

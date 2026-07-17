@@ -37,7 +37,9 @@ export const content = {
     seeYourselfNo: "No",
     seeYourselfNotSure: "Not Sure",
     questionnaireHeading: "Final Questionnaire",
-    questionnaireBody: "Please complete the short questionnaire below.",
+    questionnaireBody:
+      "Please open the questionnaire below and complete it in the new tab that appears. When you're done, come back to this tab.",
+    questionnaireOpenButton: "Open Questionnaire",
     questionnaireDone: "I have completed the questionnaire",
     openEndedIntro:
       "Before we finish, we would love to hear your thoughts. There are no right or wrong answers — just tell us what you genuinely think.",
@@ -100,7 +102,8 @@ export const content = {
     seeYourselfNotSure: "Not Sure",
     questionnaireHeading: "Almost Done!",
     questionnaireBody:
-      "Please answer a few more fun questions below with a grown-up if you need help.",
+      "Tap the button below to open a few more fun questions in a new tab — ask a grown-up if you need help. When you're done, come back here.",
+    questionnaireOpenButton: "Open the Questions!",
     questionnaireDone: "All Done With Questions!",
     openEndedCaption:
       "Look at this! Our special computer changed what this person's face looks like in the video — but you can still see everything they are doing!",
@@ -134,7 +137,7 @@ export const content = {
   },
 } as const;
 
-export const TOTAL_PAIRS = 15;
+export const TOTAL_PAIRS = 16;
 export const TOTAL_ACTIONS = 15;
 export const STAND_UP_AFTER_ACTION = 12;
 
