@@ -68,7 +68,7 @@ export default function QuestionnairePage({ params }: { params: { mode: Mode } }
 
       <div className="sticky bottom-0 bg-inherit px-4 py-6 flex justify-center">
         <button
-          onClick={() => router.push(`/session/${mode}/goodbye`)}
+          onClick={() => router.push(`/session/${mode}/openended`)}
           disabled={!introAudioDone}
           className={
             isAdult

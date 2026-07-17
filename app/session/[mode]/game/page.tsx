@@ -55,7 +55,7 @@ export default function GamePage({ params }: { params: { mode: Mode } }) {
   const { play: playComplete } = useAudio(
     [audioClip(mode, "game_complete")],
     () => {
-      router.push(`/session/${mode}/seeyourself`);
+      router.push(`/session/${mode}/questionnaire`);
     },
   );
 

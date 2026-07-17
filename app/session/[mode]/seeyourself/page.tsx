@@ -1,7 +1,31 @@
 "use client";
 
-import { useEffect, useState } from "react";
+// The "See Yourself" activity has been temporarily removed from the
+// session flow (replaced by the Screen 6 open-ended questions screen,
+// positioned after the questionnaire instead of before it). Nothing in
+// the app routes here anymore. The original implementation is kept below,
+// commented out, in case this screen is reinstated later.
+//
+// If this route is ever visited directly, redirect on to the actual next
+// step rather than showing a dead page.
+
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { Mode } from "@/lib/supabase";
+
+export default function SeeYourselfPage({ params }: { params: { mode: Mode } }) {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace(`/session/${params.mode}/questionnaire`);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return null;
+}
+
+/*
+import { useState } from "react";
 import Image from "next/image";
 import { AnswerOptions } from "@/components/AnswerOptions";
 import { ConfidenceRating } from "@/components/ConfidenceRating";
@@ -23,9 +47,11 @@ export default function SeeYourselfPage({ params }: { params: { mode: Mode } }) 
   const [finishing, setFinishing] = useState(false);
   const [introAudioDone, setIntroAudioDone] = useState(false);
 
+  // commented out — see yourself screen temporarily removed, may be reinstated
   const { play: playIntro } = useAudio([audioClip(mode, "see_yourself_intro")], () =>
     setIntroAudioDone(true)
   );
+  // commented out — see yourself screen temporarily removed, may be reinstated
   const { play: playComplete } = useAudio([audioClip(mode, "see_yourself_complete")], () => {
     router.push(`/session/${mode}/questionnaire`);
   });
@@ -121,3 +147,4 @@ export default function SeeYourselfPage({ params }: { params: { mode: Mode } }) 
     </main>
   );
 }
+*/

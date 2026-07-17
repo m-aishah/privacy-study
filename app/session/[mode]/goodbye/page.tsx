@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Logo } from "@/components/Logo";
+import { CornerLogo } from "@/components/CornerLogo";
 import { CheckIcon, PartyIcon } from "@/components/icons";
 import { useAudio } from "@/hooks/useAudio";
 import { audioClip, content } from "@/lib/content";
@@ -33,7 +33,7 @@ export default function GoodbyePage({ params }: { params: { mode: Mode } }) {
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center px-6 py-12 gap-8 text-center">
-      <Logo size={isAdult ? 72 : 56} />
+      <CornerLogo size={isAdult ? 40 : 32} />
       {!isAdult && <PartyIcon className="w-16 h-16 text-kids-yellow" />}
       <h1
         className={
