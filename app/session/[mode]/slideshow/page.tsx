@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { AudioIndicator } from "@/components/AudioIndicator";
 import { ProgressIndicator } from "@/components/ProgressIndicator";
 import { AnswerOptions } from "@/components/AnswerOptions";
 import { ConfidenceRating } from "@/components/ConfidenceRating";
@@ -110,7 +111,7 @@ export default function SlideshowPage({ params }: { params: { mode: Mode } }) {
         </p>
       </div>
 
-      {pairAudioDone && (
+      {pairAudioDone ? (
         <>
           <AnswerOptions
             mode={mode}
@@ -134,6 +135,10 @@ export default function SlideshowPage({ params }: { params: { mode: Mode } }) {
             />
           </div>
         </>
+      ) : (
+        <div className="mt-6">
+          <AudioIndicator mode={mode} label={copy.audioPlaying} />
+        </div>
       )}
 
       <div className="mt-5 mb-4 min-h-[3.5rem]">

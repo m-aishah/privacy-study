@@ -2,13 +2,15 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { ActionMedia } from "@/components/ActionMedia";
+import { AudioIndicator } from "@/components/AudioIndicator";
 import { ProgressIndicator } from "@/components/ProgressIndicator";
 import { NextButton } from "@/components/NextButton";
 import { ReplayButton } from "@/components/ReplayButton";
 import { StandUpAvatar } from "@/components/StandUpAvatar";
 import { useAudio } from "@/hooks/useAudio";
 import {
-  actionVideoSrc,
+  actionMediaBase,
   audioClip,
   content,
   STAND_UP_AFTER_ACTION,
@@ -27,24 +29,28 @@ export default function GamePage({ params }: { params: { mode: Mode } }) {
   const copy = content[mode];
   const router = useRouter();
   const videoRef = useRef<HTMLVideoElement>(null);
-  const introQueuedRef = useRef(false);
 
   const [phase, setPhase] = useState<Phase>("action");
   const [actionNumber, setActionNumber] = useState(1);
   const [actionAudioDone, setActionAudioDone] = useState(false);
   const [standUpAudioDone, setStandUpAudioDone] = useState(false);
+  const [mediaKind, setMediaKind] = useState<"video" | "image" | null>(null);
 
   // game_intro only ever plays once, chained in front of the first action's
   // cue in the same queue so the two never overlap (useAudio guarantees
   // sequential, non-overlapping playback within a single queue, but two
   // separate useAudio calls firing at the same time would still overlap
-  // each other).
-  const actionClips = introQueuedRef.current
-    ? [audioClip(mode, `action_${actionNumber}`)]
-    : [
-        audioClip(mode, "game_intro"),
-        audioClip(mode, `action_${actionNumber}`),
-      ];
+  // each other). This is keyed on actionNumber directly (not a ref flipped
+  // after the fact) — a ref mutated mid-effect changed the clips array
+  // between the initial render and the very next one (triggered by the
+  // same effect's setActionAudioDone(false) call), which made useAudio
+  // tear down game_intro's just-started playback and rebuild for a single
+  // clip that nothing ever actually played, hanging the Next button
+  // forever on the first action.
+  const actionClips =
+    actionNumber === 1
+      ? [audioClip(mode, "game_intro"), audioClip(mode, `action_${actionNumber}`)]
+      : [audioClip(mode, `action_${actionNumber}`)];
 
   const { play: playActionCue } = useAudio(actionClips, () =>
     setActionAudioDone(true),
@@ -68,7 +74,6 @@ export default function GamePage({ params }: { params: { mode: Mode } }) {
     if (phase === "action") {
       setActionAudioDone(false);
       playActionCue();
-      introQueuedRef.current = true;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [actionNumber, phase]);
@@ -133,12 +138,14 @@ export default function GamePage({ params }: { params: { mode: Mode } }) {
           {copy.standUpBody}
         </p>
         <div className="min-h-[3.5rem]">
-          {standUpAudioDone && (
+          {standUpAudioDone ? (
             <NextButton
               mode={mode}
               label={copy.standUpReady}
               onClick={handleReady}
             />
+          ) : (
+            <AudioIndicator mode={mode} label={copy.audioPlaying} />
           )}
         </div>
       </main>
@@ -161,29 +168,29 @@ export default function GamePage({ params }: { params: { mode: Mode } }) {
               : "relative w-full aspect-video max-h-[75vh] bg-black rounded-3xl border-4 border-kids-teal overflow-hidden mx-auto"
           }
         >
-          <video
+          <ActionMedia
             ref={videoRef}
-            key={actionNumber}
-            src={actionVideoSrc(mode, actionNumber)}
-            autoPlay
-            muted
-            playsInline
-            controls={false}
-            className="w-full h-full object-cover"
+            basePath={actionMediaBase(mode, actionNumber)}
+            alt={`Action ${actionNumber}`}
+            onKindChange={setMediaKind}
           />
         </div>
 
         <div className="flex flex-col items-center justify-center gap-4">
           <div className="min-h-[3.5rem]">
-            {actionAudioDone && (
+            {actionAudioDone ? (
               <NextButton mode={mode} label={copy.next} onClick={handleNext} />
+            ) : (
+              <AudioIndicator mode={mode} label={copy.audioPlaying} />
             )}
           </div>
-          <ReplayButton
-            mode={mode}
-            label={copy.replay}
-            onClick={handleReplay}
-          />
+          {mediaKind === "video" && (
+            <ReplayButton
+              mode={mode}
+              label={copy.replay}
+              onClick={handleReplay}
+            />
+          )}
         </div>
       </div>
     </main>

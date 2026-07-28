@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { AudioIndicator } from "@/components/AudioIndicator";
 import { CornerLogo } from "@/components/CornerLogo";
 import { CheckIcon, PartyIcon } from "@/components/icons";
 import { useAudio } from "@/hooks/useAudio";
@@ -52,7 +53,7 @@ export default function GoodbyePage({ params }: { params: { mode: Mode } }) {
         {copy.goodbyeBody}
       </p>
       <div className="min-h-[3.5rem]">
-        {goodbyeAudioDone && (
+        {goodbyeAudioDone ? (
           <button
             onClick={handleFinish}
             className={
@@ -64,6 +65,8 @@ export default function GoodbyePage({ params }: { params: { mode: Mode } }) {
             {copy.finishSession}
             <CheckIcon className={isAdult ? "w-5 h-5" : "w-6 h-6"} />
           </button>
+        ) : (
+          <AudioIndicator mode={mode} label={copy.audioPlaying} />
         )}
       </div>
     </main>

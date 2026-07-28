@@ -12,10 +12,6 @@ import { content, TOTAL_PAIRS } from "@/lib/content";
 
 type CompletionInfo = { slideshowCount: number; openEndedCount: number };
 
-function requiredOpenEnded(mode: string) {
-  return mode === "adult" ? 5 : 1;
-}
-
 function openEndedQuestionText(mode: string, questionNumber: number): string {
   if (mode === "adult") {
     return content.adult.openEndedQuestions[questionNumber - 1] ?? `Question ${questionNumber}`;
@@ -317,8 +313,10 @@ function CompletionBadge({
   mode: string;
   completion: CompletionInfo;
 }) {
-  const required = requiredOpenEnded(mode);
-  const isComplete = completion.slideshowCount >= TOTAL_PAIRS && completion.openEndedCount >= required;
+  // Screen 6 (open-ended reflection) is currently disabled, so completion
+  // is judged on the slideshow alone. openEndedCount is still tracked and
+  // shown in the expanded row for any legacy sessions that have it.
+  const isComplete = completion.slideshowCount >= TOTAL_PAIRS;
 
   if (isComplete) {
     return (
@@ -330,8 +328,7 @@ function CompletionBadge({
 
   return (
     <span className="inline-flex items-center gap-1 text-amber-700 bg-amber-50 border border-amber-200 rounded px-2 py-0.5 text-xs font-medium">
-      Incomplete · {completion.slideshowCount}/{TOTAL_PAIRS} slideshow ·{" "}
-      {completion.openEndedCount}/{required} reflection
+      Incomplete · {completion.slideshowCount}/{TOTAL_PAIRS} slideshow
     </span>
   );
 }

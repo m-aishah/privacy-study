@@ -19,6 +19,7 @@ export const content = {
     duplicateIdError:
       "This participant ID has already been used. Please check with your session coordinator for the correct ID.",
     submit: "Continue",
+    audioPlaying: "Please wait, audio is playing…",
     slideshowIntroHeading: "Comparing Faces",
     slideshowQuestion: "Are these the same person?",
     confidenceLabel: "How confident are you?",
@@ -83,6 +84,7 @@ export const content = {
     duplicateIdError:
       "That ID has already been used! Ask the grown-up in the room for the right one.",
     submit: "Let's Go!",
+    audioPlaying: "Listen closely, more is coming…",
     slideshowIntroHeading: "Spot the Match!",
     slideshowQuestion: "Are these two pictures the same person?",
     confidenceLabel: "How sure are you?",
@@ -141,13 +143,16 @@ export const TOTAL_PAIRS = 16;
 export const TOTAL_ACTIONS = 15;
 export const STAND_UP_AFTER_ACTION = 12;
 
-export function actionVideoSrc(_mode: Mode, actionNumber: number) {
-  // Both adult and children modes currently play from the adult video
-  // folder/naming until dedicated children's action videos are recorded.
-  return `/video/adult/action_${actionNumber}_adult.mp4`;
+export function actionMediaBase(_mode: Mode, actionNumber: number) {
+  // Both adult and children modes currently play from the adult media
+  // folder/naming until dedicated children's action clips are recorded.
+  // No extension here on purpose — some actions are videos, some are
+  // still images, and ActionMedia tries each candidate in turn.
+  return `/video/adult/action_${actionNumber}_adult`;
 }
 
 export const IMAGE_EXTENSIONS = ["jpg", "jpeg", "png"] as const;
+export const VIDEO_EXTENSIONS = ["mp4", "webm", "mov"] as const;
 
 export function slideshowPairSrc(pairNumber: number) {
   // No extension here on purpose — FallbackImage tries each of
