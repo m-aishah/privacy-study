@@ -19,6 +19,7 @@ export const content = {
     duplicateIdError:
       "This participant ID has already been used. Please check with your session coordinator for the correct ID.",
     submit: "Continue",
+    audioPlaying: "Please wait, audio is playing…",
     slideshowIntroHeading: "Comparing Faces",
     slideshowQuestion: "Are these the same person?",
     confidenceLabel: "How confident are you?",
@@ -83,6 +84,7 @@ export const content = {
     duplicateIdError:
       "That ID has already been used! Ask the grown-up in the room for the right one.",
     submit: "Let's Go!",
+    audioPlaying: "Listen closely, more is coming…",
     slideshowIntroHeading: "Spot the Match!",
     slideshowQuestion: "Are these two pictures the same person?",
     confidenceLabel: "How sure are you?",

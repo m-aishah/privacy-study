@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAudio } from "@/hooks/useAudio";
+import { AudioIndicator } from "@/components/AudioIndicator";
 import { CheckIcon, ArrowRightIcon } from "@/components/icons";
 import { audioClip, content } from "@/lib/content";
 import { Mode } from "@/lib/supabase";
@@ -82,7 +83,7 @@ export default function QuestionnairePage({ params }: { params: { mode: Mode } }
       )}
 
       <div className="min-h-[3.5rem]">
-        {introAudioDone && (
+        {introAudioDone ? (
           <button
             onClick={() => router.push(`/session/${mode}/goodbye`)}
             className={
@@ -94,6 +95,8 @@ export default function QuestionnairePage({ params }: { params: { mode: Mode } }
             {copy.questionnaireDone}
             <CheckIcon className={isAdult ? "w-5 h-5" : "w-6 h-6"} />
           </button>
+        ) : (
+          <AudioIndicator mode={mode} label={copy.audioPlaying} />
         )}
       </div>
     </main>

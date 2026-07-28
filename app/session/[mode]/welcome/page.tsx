@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { AudioIndicator } from "@/components/AudioIndicator";
 import { CornerLogo } from "@/components/CornerLogo";
 import { useAudio } from "@/hooks/useAudio";
 import { audioClip, content } from "@/lib/content";
@@ -121,18 +122,23 @@ export default function WelcomePage({ params }: { params: { mode: Mode } }) {
           </p>
         )}
 
-        {participantId.length > 0 && welcomeAudioDone && (
-          <button
-            onClick={handleSubmit}
-            disabled={submitting}
-            className={
-              isAdult
-                ? "font-adult text-xl px-10 py-4 bg-adult-green text-white rounded-none hover:opacity-90 transition-opacity disabled:opacity-50"
-                : "font-kids text-xl px-10 py-5 bg-kids-coral text-white rounded-full shadow-md hover:scale-105 transition-transform disabled:opacity-50 animate-bounce-in"
-            }
-          >
-            {copy.submit}
-          </button>
+        {participantId.length > 0 && (
+          <>
+            {!welcomeAudioDone || submitting ? (
+              <AudioIndicator mode={mode} label={copy.audioPlaying} />
+            ) : (
+              <button
+                onClick={handleSubmit}
+                className={
+                  isAdult
+                    ? "font-adult text-xl px-10 py-4 bg-adult-green text-white rounded-none hover:opacity-90 transition-opacity"
+                    : "font-kids text-xl px-10 py-5 bg-kids-coral text-white rounded-full shadow-md hover:scale-105 transition-transform animate-bounce-in"
+                }
+              >
+                {copy.submit}
+              </button>
+            )}
+          </>
         )}
       </div>
     </main>
