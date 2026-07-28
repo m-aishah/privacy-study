@@ -141,13 +141,16 @@ export const TOTAL_PAIRS = 16;
 export const TOTAL_ACTIONS = 15;
 export const STAND_UP_AFTER_ACTION = 12;
 
-export function actionVideoSrc(_mode: Mode, actionNumber: number) {
-  // Both adult and children modes currently play from the adult video
-  // folder/naming until dedicated children's action videos are recorded.
-  return `/video/adult/action_${actionNumber}_adult.mp4`;
+export function actionMediaBase(_mode: Mode, actionNumber: number) {
+  // Both adult and children modes currently play from the adult media
+  // folder/naming until dedicated children's action clips are recorded.
+  // No extension here on purpose — some actions are videos, some are
+  // still images, and ActionMedia tries each candidate in turn.
+  return `/video/adult/action_${actionNumber}_adult`;
 }
 
 export const IMAGE_EXTENSIONS = ["jpg", "jpeg", "png"] as const;
+export const VIDEO_EXTENSIONS = ["mp4", "webm", "mov"] as const;
 
 export function slideshowPairSrc(pairNumber: number) {
   // No extension here on purpose — FallbackImage tries each of

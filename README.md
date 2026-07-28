@@ -62,7 +62,7 @@ public/
     demo_anonymized.{jpg,jpeg,png}     (Screen 6 — same clip with the face anonymized;
                                          same jpg/jpeg/png fallback as the slideshow pairs)
   video/
-    adult/action_1_adult.mp4 ... action_15_adult.mp4
+    adult/action_1_adult.{mp4,webm,mov,jpg,jpeg,png} ... action_15_adult.{...}
     children/                         (not currently used — see note below)
   slideshow/
     pair_1a.jpg, pair_1b.jpg ... pair_16a.jpg, pair_16b.jpg
@@ -75,8 +75,18 @@ public/
 
 **Video note:** both Adult and Children modes currently play from
 `public/video/adult/` (the `children/` folder isn't read yet) until
-dedicated children's action videos are recorded — see
-`actionVideoSrc()` in `lib/content.ts`.
+dedicated children's action clips are recorded — see
+`actionMediaBase()` in `lib/content.ts`.
+
+**Movements activity is a mix of video and still images.** Not every
+action has a recorded video yet — some are still images standing in for
+now. For each `action_N_adult`, drop in whichever you have (`.mp4`,
+`.webm`, or `.mov` for a video; `.jpg`, `.jpeg`, or `.png` for a still) —
+`ActionMedia` (`components/ActionMedia.tsx`) probes for whichever exists
+and renders it. The display box is a fixed size; videos (already 16:9)
+fill it edge-to-edge, while images — which come in in several different
+dimensions — are shown uncropped, centered, with a blurred/scaled copy of
+themselves filling the space around them instead of hard black bars.
 
 ### Audio clip names (in `public/audio/<mode>/`)
 
@@ -127,13 +137,16 @@ Visit `http://localhost:3000` — this is the coordinator's mode-select page.
 1. Sydney (the coordinator) opens `/`, picks Adult or Children mode.
 2. She enters the participant ID on the welcome screen, then hands the
    laptop to the participant.
-3. The participant is guided, screen by screen, through: welcome ->
-   slideshow (16 image-pair comparisons) -> game (15 actions, with a
-   stand-up break after action 12, and a silent trigger to the
-   anonymization pipeline via ngrok) -> questionnaire -> Screen 6
-   (open-ended reflection questions — 5 for adults, 1 for children) ->
-   goodbye. (The see-yourself screen is currently disabled; its code is
-   kept, commented out, in case it's reinstated.)
+3. The participant is guided through 4 screens:
+   1. **Welcome & Instructions**
+   2. **Picture Comparison Slideshow** (16 image-pair comparisons)
+   3. **The Movements** (15 actions, with a stand-up break after action
+      12, and a silent trigger to the anonymization pipeline via ngrok)
+   4. **Questionnaire**, followed by the goodbye screen.
+
+   The "See Yourself" screen and the Screen 6 open-ended reflection
+   questions are both currently disabled — their code is kept, commented
+   out, in each screen's route file, in case either is reinstated.
 
    The questionnaire screen doesn't embed the survey in an iframe — many
    survey tools (including TeamDynamix) block being framed by another

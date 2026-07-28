@@ -1,7 +1,31 @@
 "use client";
 
-import { useEffect, useState } from "react";
+// The Screen 6 "Open Ended Questions" step has been temporarily removed
+// from the session flow — the study is back down to 4 screens (Welcome,
+// Slideshow, Movements, Questionnaire). Nothing in the app routes here
+// anymore. The original implementation is kept below, commented out, in
+// case this screen is reinstated later.
+//
+// If this route is ever visited directly, redirect on to the actual next
+// step rather than showing a dead page.
+
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { Mode } from "@/lib/supabase";
+
+export default function OpenEndedPage({ params }: { params: { mode: Mode } }) {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace(`/session/${params.mode}/goodbye`);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return null;
+}
+
+/*
+import { useState } from "react";
 import { FallbackImage } from "@/components/FallbackImage";
 import { NextButton } from "@/components/NextButton";
 import { useAudio } from "@/hooks/useAudio";
@@ -206,3 +230,4 @@ export default function OpenEndedPage({ params }: { params: { mode: Mode } }) {
     </main>
   );
 }
+*/

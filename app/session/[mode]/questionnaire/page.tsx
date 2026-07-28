@@ -84,7 +84,7 @@ export default function QuestionnairePage({ params }: { params: { mode: Mode } }
       <div className="min-h-[3.5rem]">
         {introAudioDone && (
           <button
-            onClick={() => router.push(`/session/${mode}/openended`)}
+            onClick={() => router.push(`/session/${mode}/goodbye`)}
             className={
               isAdult
                 ? "font-adult text-xl px-10 py-4 bg-adult-green text-white rounded-none hover:opacity-90 transition-opacity shadow-lg inline-flex items-center gap-2"
